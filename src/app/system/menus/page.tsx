@@ -1,0 +1,383 @@
+"use client";
+
+import { GitBranch, Menu as MenuIcon, Plus, RefreshCw, Route } from "lucide-react";
+import * as React from "react";
+
+import { DataTable, type DataTableColumn } from "@/components/data-table/data-table";
+import { TableToolbar } from "@/components/data-table/table-toolbar";
+import { AppShell } from "@/components/layout/app-shell";
+import { MenuFormDialog, type MenuFormValues } from "@/components/system/menu-form-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import type { MenuRecord, Status } from "@/lib/api/types";
+import { createMenu, deleteMenu, listMenus, updateMenu } from "@/lib/services/menu-service";
+import { cn } from "@/lib/utils";
+
+type StatusFilter = "all" | Status;
+
+type FlatMenuRecord = MenuRecord & {
+  level: number;
+  parentName?: string;
+};
+
+function formatStatus(status: Status) {
+  return status === "enabled" ? "Enabled" : "Disabled";
+}
+
+function menuMatchesKeyword(menu: MenuRecord, keyword: string) {
+  const normalizedKeyword = keyword.trim().toLowerCase();
+
+  if (!normalizedKeyword) {
+    return true;
+  }
+
+  return [menu.name, menu.path, menu.icon].some((value) => value.toLowerCase().includes(normalizedKeyword));
+}
+
+function flattenMenusOneLevel(menus: MenuRecord[]): FlatMenuRecord[] {
+  const sortedMenus = [...menus].sort((a, b) => a.sort - b.sort);
+  const topLevelMenus = sortedMenus.filter((menu) => !menu.parentId);
+  const childMenus = sortedMenus.filter((menu) => menu.parentId);
+  const rows: FlatMenuRecord[] = [];
+  const usedIds = new Set<string>();
+
+  topLevelMenus.forEach((menu) => {
+    rows.push({ ...menu, level: 0 });
+    usedIds.add(menu.id);
+
+    childMenus
+      .filter((child) => child.parentId === menu.id)
+      .forEach((child) => {
+        rows.push({ ...child, level: 1, parentName: menu.name });
+        usedIds.add(child.id);
+      });
+  });
+
+  childMenus
+    .filter((menu) => !usedIds.has(menu.id))
+    .forEach((menu) => rows.push({ ...menu, level: 0 }));
+
+  return rows;
+}
+
+export default function MenusPage() {
+  const [keyword, setKeyword] = React.useState("");
+  const [status, setStatus] = React.useState<StatusFilter>("all");
+  const [menus, setMenus] = React.useState<MenuRecord[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [editing, setEditing] = React.useState<MenuRecord | null>(null);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [message, setMessage] = React.useState<string | null>(null);
+
+  const flattenedMenus = React.useMemo(() => flattenMenusOneLevel(menus), [menus]);
+  const filteredMenus = React.useMemo(() => {
+    return flattenedMenus.filter((menu) => {
+      const matchesKeyword = menuMatchesKeyword(menu, keyword);
+      const matchesStatus = status === "all" ? true : menu.status === status;
+
+      return matchesKeyword && matchesStatus;
+    });
+  }, [flattenedMenus, keyword, status]);
+  const rootCount = menus.filter((menu) => !menu.parentId).length;
+  const childCount = menus.length - rootCount;
+
+  const reloadMenus = React.useCallback(async (options?: { preserveMessage?: boolean }) => {
+    setLoading(true);
+    if (!options?.preserveMessage) {
+      setMessage(null);
+    }
+
+    try {
+      const records = await listMenus();
+      setMenus(records);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to load menus.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    let active = true;
+
+    void listMenus()
+      .then((records) => {
+        if (!active) {
+          return;
+        }
+
+        setMenus(records);
+      })
+      .catch((error: unknown) => {
+        if (!active) {
+          return;
+        }
+
+        setMessage(error instanceof Error ? error.message : "Failed to load menus.");
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const openCreateDialog = () => {
+    setEditing(null);
+    setDialogOpen(true);
+  };
+
+  const openEditDialog = (record: MenuRecord) => {
+    setEditing(record);
+    setDialogOpen(true);
+  };
+
+  const handleKeywordChange = (value: string) => {
+    setKeyword(value);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value as StatusFilter);
+  };
+
+  const handleSubmit = async (values: MenuFormValues) => {
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      if (editing) {
+        await updateMenu(editing.id, values);
+        setMessage("Menu updated successfully.");
+      } else {
+        await createMenu(values);
+        setMessage("Menu created successfully.");
+      }
+
+      setDialogOpen(false);
+      setEditing(null);
+      await reloadMenus({ preserveMessage: true });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to save menu.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleToggleStatus = async (record: MenuRecord) => {
+    const nextStatus: Status = record.status === "enabled" ? "disabled" : "enabled";
+    setMessage(null);
+
+    try {
+      await updateMenu(record.id, { status: nextStatus });
+      setMessage(`${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`);
+      await reloadMenus({ preserveMessage: true });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to update status.");
+    }
+  };
+
+  const handleDelete = async (record: MenuRecord) => {
+    const confirmed = window.confirm(`Delete menu ${record.name}? This action only affects mock data.`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setMessage(null);
+
+    try {
+      await deleteMenu(record.id);
+      setMessage("Menu deleted successfully.");
+      await reloadMenus({ preserveMessage: true });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Failed to delete menu.");
+    }
+  };
+
+  const columns: DataTableColumn<FlatMenuRecord>[] = [
+    {
+      key: "menu",
+      title: "Menu",
+      render: (record) => (
+        <div
+          className={cn(
+            "flex items-center gap-3",
+            record.level === 1 && "pl-6 before:h-px before:w-4 before:bg-border",
+          )}
+        >
+          <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-background/55 text-primary shadow-inner">
+            <MenuIcon className="h-4 w-4" aria-hidden="true" />
+          </span>
+          <div>
+            <div className="font-medium text-card-foreground">{record.name}</div>
+            <div className="mt-1 text-xs text-muted-foreground">
+              {record.level === 1 ? `Child of ${record.parentName ?? "Unknown"}` : "Root menu"}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "path",
+      title: "Path",
+      render: (record) => <span className="font-mono text-xs text-muted-foreground">{record.path}</span>,
+    },
+    {
+      key: "icon",
+      title: "Icon",
+      render: (record) => (
+        <Badge variant="outline" className="border-sky-400/25 bg-sky-400/10 font-mono text-sky-200">
+          {record.icon}
+        </Badge>
+      ),
+    },
+    {
+      key: "sort",
+      title: "Sort",
+      render: (record) => <span className="text-muted-foreground">{record.sort}</span>,
+    },
+    {
+      key: "status",
+      title: "Status",
+      render: (record) => (
+        <Badge
+          variant="outline"
+          className={
+            record.status === "enabled"
+              ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-300"
+              : "border-amber-400/25 bg-amber-400/10 text-amber-200"
+          }
+        >
+          {formatStatus(record.status)}
+        </Badge>
+      ),
+    },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (record) => (
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => openEditDialog(record)}>
+            Edit
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(record)}>
+            {record.status === "enabled" ? "Disable" : "Enable"}
+          </Button>
+          <Button variant="destructive" size="sm" onClick={() => handleDelete(record)}>
+            Delete
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <AppShell>
+      <div className="space-y-6">
+        <section className="admin-surface relative overflow-hidden p-6 sm:p-8">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_8%,rgb(34_197_94_/_16%),transparent_18rem),radial-gradient(circle_at_88%_0%,rgb(56_189_248_/_14%),transparent_16rem)]" />
+          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-primary">
+                <GitBranch className="h-4 w-4" aria-hidden="true" />
+                System / Menus
+              </p>
+              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
+                Menu routes mapped with one-level clarity.
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+                Create, edit, disable, and remove mock navigation entries while preserving a focused parent-child route map.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner sm:min-w-72">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Root</p>
+                <p className="mt-2 text-2xl font-semibold text-card-foreground">{rootCount}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Children</p>
+                <p className="mt-2 text-2xl font-semibold text-card-foreground">{childCount}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <TableToolbar
+          keyword={keyword}
+          onKeywordChange={handleKeywordChange}
+          status={status}
+          onStatusChange={handleStatusChange}
+          action={
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={() => void reloadMenus()} disabled={loading}>
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Refresh
+              </Button>
+              <Button onClick={openCreateDialog}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Add menu
+              </Button>
+            </div>
+          }
+        />
+
+        {message ? (
+          <div className="admin-surface flex items-center justify-between gap-3 p-4 text-sm text-muted-foreground">
+            <span>{message}</span>
+            <Button variant="ghost" size="sm" onClick={() => setMessage(null)}>
+              Dismiss
+            </Button>
+          </div>
+        ) : null}
+
+        <div className="relative">
+          <DataTable
+            columns={columns}
+            data={filteredMenus}
+            rowKey="id"
+            emptyText={loading ? "Loading menus..." : "No menus found."}
+          />
+          {loading ? (
+            <div className="absolute inset-0 grid place-items-center rounded-xl bg-background/45 backdrop-blur-sm">
+              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-card/90 px-4 py-2 text-sm text-muted-foreground shadow-xl">
+                <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Loading menus
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="admin-surface flex flex-col gap-3 p-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <span className="inline-flex items-center gap-2">
+            <Route className="h-4 w-4 text-primary" aria-hidden="true" />
+            Showing {filteredMenus.length} of {menus.length} menus in a one-level tree view.
+          </span>
+          <span>Route convention: /system/menus</span>
+        </div>
+      </div>
+
+      <MenuFormDialog
+        open={dialogOpen}
+        mode={editing ? "edit" : "create"}
+        menus={menus}
+        initialValues={editing}
+        submitting={submitting}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) {
+            setEditing(null);
+          }
+        }}
+        onSubmit={handleSubmit}
+      />
+    </AppShell>
+  );
+}
