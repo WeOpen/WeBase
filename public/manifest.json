@@ -1,0 +1,11 @@
+{
+  "name": "WeBase Admin",
+  "short_name": "WeBase",
+  "description": "WeBase admin-system frontend template.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#08090d",
+  "theme_color": "#09090b",
+  "lang": "zh-CN",
+  "orientation": "portrait-primary"
+}

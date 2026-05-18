@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "HarmonyOS Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --color-background: #08090d;
+  --color-foreground: #f4f5f7;
+  --color-muted: #8d95a5;
+  --color-card: #101219;
+  --color-card-foreground: #f6f7f9;
+  --color-border: #232735;
+  --color-ring: #6aa7ff;
+  --color-primary: #5f8cff;
+  --color-primary-foreground: #f8fbff;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --animate-fade-in: fade-in 360ms ease-out both;
+}
+
+:root {
+  color-scheme: dark;
+  --background: #08090d;
+  --foreground: #f4f5f7;
+  --muted: #8d95a5;
+  --card: #101219;
+  --card-foreground: #f6f7f9;
+  --border: #232735;
+  --ring: #6aa7ff;
+  --primary: #5f8cff;
+  --primary-foreground: #f8fbff;
+  --radius: 1.25rem;
+}
+
+.light {
+  color-scheme: light;
+  --background: #f5f7fb;
+  --foreground: #151821;
+  --muted: #687083;
+  --card: #ffffff;
+  --card-foreground: #151821;
+  --border: #dde3ee;
+  --ring: #376cff;
+  --primary: #285dff;
+  --primary-foreground: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 16% 0%, rgb(58 73 104 / 22%), transparent 30rem),
+    linear-gradient(180deg, rgb(15 17 24 / 88%) 0%, var(--background) 34rem);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgb(95 140 255 / 32%);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.admin-surface {
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(18px);
+}
+
+.fade-in {
+  animation: var(--animate-fade-in);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
