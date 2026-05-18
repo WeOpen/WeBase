@@ -1,0 +1,305 @@
+"use client";
+
+import * as React from "react";
+
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import type { MenuRecord, RoleRecord, Status } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
+
+export interface RoleFormValues {
+  name: string;
+  code: string;
+  description: string;
+  status: Status;
+  permissions: string[];
+}
+
+interface RoleFormDialogProps {
+  open: boolean;
+  mode: "create" | "edit";
+  menus: MenuRecord[];
+  initialValues?: RoleRecord | null;
+  submitting?: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (values: RoleFormValues) => Promise<void> | void;
+}
+
+interface RoleFormProps {
+  description: string;
+  menus: MenuRecord[];
+  initialValues?: RoleRecord | null;
+  submitting: boolean;
+  onCancel: () => void;
+  onSubmit: (values: RoleFormValues) => Promise<void> | void;
+}
+
+const emptyValues: RoleFormValues = {
+  name: "",
+  code: "",
+  description: "",
+  status: "enabled",
+  permissions: [],
+};
+
+export function getMenuPermissionKey(menu: MenuRecord) {
+  const segment = menu.path.split("/").filter(Boolean).at(-1) ?? menu.id;
+
+  return `${segment}:read`;
+}
+
+function getInitialValues(role?: RoleRecord | null, menus: MenuRecord[] = []): RoleFormValues {
+  if (!role) {
+    return emptyValues;
+  }
+
+  const hasAllPermissions = role.permissions.includes("*");
+  const permissions = hasAllPermissions
+    ? menus.map(getMenuPermissionKey)
+    : menus
+        .filter((menu) => {
+          const key = getMenuPermissionKey(menu);
+          const base = key.split(":")[0];
+
+          return role.permissions.some(
+            (permission) =>
+              permission === key ||
+              permission === menu.id ||
+              permission === menu.path ||
+              permission.startsWith(`${base}:`),
+          );
+        })
+        .map(getMenuPermissionKey);
+
+  return {
+    name: role.name,
+    code: role.code,
+    description: role.description,
+    status: role.status,
+    permissions,
+  };
+}
+
+function normalizeCode(value: string) {
+  return value
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .toUpperCase();
+}
+
+function RoleForm({
+  description,
+  menus,
+  initialValues,
+  submitting,
+  onCancel,
+  onSubmit,
+}: RoleFormProps) {
+  const [values, setValues] = React.useState<RoleFormValues>(() => getInitialValues(initialValues, menus));
+  const [formError, setFormError] = React.useState<string | null>(null);
+
+  const updateValue = <Key extends keyof RoleFormValues>(key: Key, value: RoleFormValues[Key]) => {
+    setFormError(null);
+    setValues((current) => ({ ...current, [key]: value }));
+  };
+
+  const togglePermission = (permission: string) => {
+    setValues((current) => {
+      const selected = current.permissions.includes(permission);
+
+      return {
+        ...current,
+        permissions: selected
+          ? current.permissions.filter((item) => item !== permission)
+          : [...current.permissions, permission],
+      };
+    });
+  };
+
+  const toggleAllPermissions = () => {
+    const allPermissions = menus.map(getMenuPermissionKey);
+    const allSelected = allPermissions.every((permission) => values.permissions.includes(permission));
+
+    updateValue("permissions", allSelected ? [] : allPermissions);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const name = values.name.trim();
+    const code = normalizeCode(values.code);
+    const description = values.description.trim();
+
+    if (!name || !code || !description) {
+      setFormError("Role name, code, and description are required.");
+      return;
+    }
+
+    await onSubmit({
+      name,
+      code,
+      description,
+      status: values.status,
+      permissions: values.permissions,
+    });
+  };
+
+  const selectedCount = values.permissions.length;
+  const allSelected = menus.length > 0 && selectedCount === menus.length;
+
+  return (
+    <form className="space-y-5" onSubmit={handleSubmit}>
+      <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+
+      {formError ? (
+        <div className="rounded-xl border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {formError}
+        </div>
+      ) : null}
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="space-y-2 text-sm font-medium text-card-foreground">
+          <span>Role name</span>
+          <Input
+            required
+            value={values.name}
+            onChange={(event) => updateValue("name", event.target.value)}
+            placeholder="Operations Manager"
+            className="bg-background/55"
+          />
+        </label>
+
+        <label className="space-y-2 text-sm font-medium text-card-foreground">
+          <span>Role code</span>
+          <Input
+            required
+            value={values.code}
+            onChange={(event) => updateValue("code", event.target.value)}
+            onBlur={(event) => updateValue("code", normalizeCode(event.target.value))}
+            placeholder="OPERATIONS_MANAGER"
+            className="bg-background/55 font-mono uppercase tracking-[0.08em]"
+          />
+        </label>
+
+        <label className="space-y-2 text-sm font-medium text-card-foreground">
+          <span>Status</span>
+          <select
+            value={values.status}
+            onChange={(event) => updateValue("status", event.target.value as Status)}
+            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <option value="enabled">Enabled</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </label>
+
+        <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
+          <span>Description</span>
+          <Textarea
+            required
+            value={values.description}
+            onChange={(event) => updateValue("description", event.target.value)}
+            placeholder="Describe what this role can access."
+            className="bg-background/55"
+          />
+        </label>
+      </div>
+
+      <section className="rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner">
+        <div className="flex flex-col gap-3 border-b border-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-card-foreground">Menu permissions</h3>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+              Select menu-level access only. Action-level permissions are intentionally out of scope.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={toggleAllPermissions} disabled={menus.length === 0}>
+            {allSelected ? "Clear all" : "Select all"}
+          </Button>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {menus.map((menu) => {
+            const permission = getMenuPermissionKey(menu);
+            const checked = values.permissions.includes(permission);
+
+            return (
+              <label
+                key={menu.id}
+                className={cn(
+                  "group flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-colors",
+                  checked
+                    ? "border-primary/35 bg-primary/10 text-card-foreground"
+                    : "border-white/10 bg-card/40 text-muted-foreground hover:border-white/20 hover:bg-white/[0.04]",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => togglePermission(permission)}
+                  className="mt-1 h-4 w-4 rounded border-border bg-background accent-primary"
+                />
+                <span>
+                  <span className="block text-sm font-medium text-card-foreground">{menu.name}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">{menu.path}</span>
+                </span>
+              </label>
+            );
+          })}
+        </div>
+
+        <p className="mt-4 text-xs text-muted-foreground">
+          {selectedCount} of {menus.length} menus selected.
+        </p>
+      </section>
+
+      <div className="flex justify-end gap-3 border-t border-border/70 pt-5">
+        <Button type="button" variant="outline" disabled={submitting} onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={submitting}>
+          {submitting ? "Saving..." : "Save role"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export function RoleFormDialog({
+  open,
+  mode,
+  menus,
+  initialValues,
+  submitting = false,
+  onOpenChange,
+  onSubmit,
+}: RoleFormDialogProps) {
+  const title = mode === "create" ? "Create role" : "Edit role";
+  const description =
+    mode === "create"
+      ? "Create a local mock role and assign menu-level permissions for this session."
+      : "Update the selected role profile and menu access scope.";
+  const formKey = `${mode}-${initialValues?.id ?? "new"}-${menus.length}-${open ? "open" : "closed"}`;
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      className="border-white/10 bg-card/95 backdrop-blur-xl sm:max-w-3xl"
+    >
+      <RoleForm
+        key={formKey}
+        description={description}
+        menus={menus}
+        initialValues={initialValues}
+        submitting={submitting}
+        onCancel={() => onOpenChange(false)}
+        onSubmit={onSubmit}
+      />
+    </Dialog>
+  );
+}
