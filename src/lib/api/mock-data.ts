@@ -49,11 +49,11 @@ export const roles: RoleRecord[] = [
 
 export const menus: MenuRecord[] = [
   { id: "m-001", name: "Dashboard", path: "/dashboard", icon: "LayoutDashboard", sort: 1, status: "enabled" },
-  { id: "m-002", name: "User Management", path: "/users", icon: "Users", sort: 2, status: "enabled" },
-  { id: "m-003", name: "Role Management", path: "/roles", icon: "ShieldCheck", sort: 3, status: "enabled" },
-  { id: "m-004", name: "Menu Management", path: "/menus", icon: "Menu", sort: 4, status: "enabled" },
-  { id: "m-005", name: "System Settings", path: "/settings", icon: "Settings", sort: 5, status: "enabled" },
-  { id: "m-006", name: "Audit Logs", path: "/settings/audit-logs", icon: "ScrollText", parentId: "m-005", sort: 6, status: "disabled" },
+  { id: "m-002", name: "User Management", path: "/system/users", icon: "Users", sort: 2, status: "enabled" },
+  { id: "m-003", name: "Role Management", path: "/system/roles", icon: "ShieldCheck", sort: 3, status: "enabled" },
+  { id: "m-004", name: "Menu Management", path: "/system/menus", icon: "Menu", sort: 4, status: "enabled" },
+  { id: "m-005", name: "System Settings", path: "/system/settings", icon: "Settings", sort: 5, status: "enabled" },
+  { id: "m-006", name: "Audit Logs", path: "/system/settings/audit-logs", icon: "ScrollText", parentId: "m-005", sort: 6, status: "disabled" },
 ];
 
 export const systemSettings: SystemSettings = {

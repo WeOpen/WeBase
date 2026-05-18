@@ -22,22 +22,22 @@ export const adminMenu: AdminMenuItem[] = [
   },
   {
     title: "用户管理",
-    href: "/users",
+    href: "/system/users",
     icon: UsersRound,
   },
   {
     title: "角色权限",
-    href: "/roles",
+    href: "/system/roles",
     icon: ShieldCheck,
   },
   {
     title: "菜单管理",
-    href: "/menus",
+    href: "/system/menus",
     icon: MenuSquare,
   },
   {
     title: "系统设置",
-    href: "/settings",
+    href: "/system/settings",
     icon: Settings,
   },
 ];
