@@ -19,6 +19,7 @@ type DialogCommonProps = {
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
 };
 
 type DialogAccessibleName =
@@ -40,6 +41,7 @@ export function Dialog({
   ariaLabel,
   children,
   className,
+  initialFocusRef,
 }: DialogProps) {
   const titleId = React.useId();
   const contentRef = React.useRef<HTMLElement>(null);
@@ -61,6 +63,13 @@ export function Dialog({
         return;
       }
 
+      const initialFocusElement = initialFocusRef?.current;
+
+      if (initialFocusElement && content.contains(initialFocusElement)) {
+        initialFocusElement.focus();
+        return;
+      }
+
       const [firstFocusable] = getFocusableElements(content);
       (firstFocusable ?? content).focus();
     }, 0);
@@ -79,7 +88,7 @@ export function Dialog({
       document.body.style.overflow = previousOverflow;
       previousActiveElementRef.current?.focus();
     };
-  }, [onOpenChange, open]);
+  }, [initialFocusRef, onOpenChange, open]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key !== "Tab") {

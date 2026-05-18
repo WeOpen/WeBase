@@ -1,0 +1,189 @@
+"use client";
+
+import { ArrowRight, FileText, Search, ShieldCheck, UserRound } from "lucide-react";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+
+import { Badge } from "@/components/ui/badge";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { adminMenu, type AdminMenuItem } from "@/lib/navigation/admin-menu";
+import { roles, users } from "@/lib/api/mock-data";
+import { cn } from "@/lib/utils";
+
+type SearchResultType = "menu" | "user" | "role";
+
+type SearchResult = {
+  id: string;
+  type: SearchResultType;
+  title: string;
+  description: string;
+  href: string;
+  keywords: string;
+};
+
+const resultLabels: Record<SearchResultType, string> = {
+  menu: "菜单",
+  user: "用户",
+  role: "角色",
+};
+
+const resultIcons = {
+  menu: FileText,
+  user: UserRound,
+  role: ShieldCheck,
+};
+
+function flattenMenu(items: AdminMenuItem[]): AdminMenuItem[] {
+  return items.flatMap((item) => [item, ...(item.children ? flattenMenu(item.children) : [])]);
+}
+
+export function buildGlobalSearchResults(): SearchResult[] {
+  const menuResults = flattenMenu(adminMenu).map((item) => ({
+    id: `menu:${item.href}`,
+    type: "menu" as const,
+    title: item.title,
+    description: item.href,
+    href: item.href,
+    keywords: [item.title, item.href].join(" "),
+  }));
+
+  const userResults = users.map((user) => ({
+    id: `user:${user.id}`,
+    type: "user" as const,
+    title: user.name,
+    description: `${user.username} · ${user.email} · ${user.role}`,
+    href: "/system/users",
+    keywords: [user.name, user.username, user.email, user.role, user.status].join(" "),
+  }));
+
+  const roleResults = roles.map((role) => ({
+    id: `role:${role.id}`,
+    type: "role" as const,
+    title: role.name,
+    description: `${role.code} · ${role.description}`,
+    href: "/system/roles",
+    keywords: [role.name, role.code, role.description, role.status].join(" "),
+  }));
+
+  return [...menuResults, ...userResults, ...roleResults];
+}
+
+function getFilteredResults(results: SearchResult[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return results.slice(0, 8);
+  }
+
+  return results
+    .filter((result) => result.keywords.toLowerCase().includes(normalizedQuery))
+    .slice(0, 8);
+}
+
+type GlobalSearchDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogProps) {
+  const router = useRouter();
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
+  const [query, setQuery] = React.useState("");
+  const searchResults = React.useMemo(() => buildGlobalSearchResults(), []);
+  const filteredResults = React.useMemo(
+    () => getFilteredResults(searchResults, query),
+    [query, searchResults],
+  );
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    onOpenChange(nextOpen);
+
+    if (!nextOpen) {
+      setQuery("");
+    }
+  };
+
+  const handleSelect = (result: SearchResult) => {
+    handleOpenChange(false);
+    router.push(result.href);
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={handleOpenChange}
+      title="全局搜索"
+      initialFocusRef={searchInputRef}
+      className="max-w-2xl overflow-hidden rounded-[2rem] border-border/75 bg-card/92 shadow-[0_34px_100px_rgb(0_0_0_/_42%)] backdrop-blur-2xl"
+    >
+      <div className="rounded-3xl border border-border/70 bg-background/30 p-3 sm:p-4">
+        <div className="flex items-center gap-3 rounded-2xl border border-border/75 bg-background/65 px-4 py-3 shadow-inner">
+          <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+          <Input
+            ref={searchInputRef}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索菜单、用户、角色..."
+            className="h-8 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+            aria-label="全局搜索关键词"
+          />
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          输入名称、邮箱、角色编码或路径，按 Esc 关闭。
+        </p>
+      </div>
+
+      <div className="mt-4 max-h-[26rem] overflow-y-auto pr-1">
+        {filteredResults.length > 0 ? (
+          <div className="space-y-2">
+            {filteredResults.map((result) => {
+              const Icon = resultIcons[result.type];
+
+              return (
+                <button
+                  key={result.id}
+                  type="button"
+                  onClick={() => handleSelect(result)}
+                  className={cn(
+                    "group flex w-full items-center gap-3 rounded-2xl border border-transparent p-3 text-left transition-all duration-200",
+                    "hover:border-primary/30 hover:bg-primary/10 hover:shadow-[0_18px_48px_rgb(95_140_255_/_14%)]",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  )}
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-border/75 bg-background/60 text-muted-foreground transition-colors group-hover:border-primary/30 group-hover:bg-primary/15 group-hover:text-primary">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-sm font-semibold text-foreground">
+                        {result.title}
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="shrink-0 border-border/70 bg-background/45 text-[10px] text-muted-foreground"
+                      >
+                        {resultLabels[result.type]}
+                      </Badge>
+                    </span>
+                    <span className="mt-1 block truncate text-xs text-muted-foreground">
+                      {result.description}
+                    </span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-dashed border-border/80 bg-background/35 px-6 py-10 text-center">
+            <p className="text-sm font-medium text-foreground">没有找到匹配结果</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              试试用户邮箱、角色编码或菜单名称。
+            </p>
+          </div>
+        )}
+      </div>
+    </Dialog>
+  );
+}

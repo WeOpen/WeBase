@@ -3,8 +3,10 @@
 import { LogOut, Menu, Moon, Search, Sun, UserRound } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { GlobalSearchDialog } from "@/components/layout/global-search-dialog";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useLayoutStore } from "@/lib/stores/layout-store";
 
@@ -14,9 +16,23 @@ export function AppHeader() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const setMobileSidebarOpen = useLayoutStore((state) => state.setMobileSidebarOpen);
+  const [searchOpen, setSearchOpen] = React.useState(false);
 
   const isDark = resolvedTheme !== "light";
   const displayName = user?.name || user?.username || "管理员";
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleToggleTheme = () => {
     setTheme(isDark ? "light" : "dark");
@@ -28,7 +44,9 @@ export function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 px-4 py-4 sm:px-6 lg:px-8">
+    <>
+      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+      <header className="sticky top-0 z-40 px-4 py-4 sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-3 rounded-[1.75rem] border border-border/70 bg-card/72 px-3 py-2 shadow-[0_20px_70px_rgb(0_0_0_/_24%)] backdrop-blur-2xl sm:px-4">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button
@@ -56,18 +74,29 @@ export function AppHeader() {
           </div>
         </div>
 
-        <div className="hidden min-w-72 items-center gap-3 rounded-2xl border border-border/70 bg-background/45 px-4 py-2.5 text-sm text-muted-foreground md:flex">
-          <Search className="h-4 w-4" aria-hidden="true" />
+        <button
+          type="button"
+          className="hidden min-w-72 items-center gap-3 rounded-2xl border border-border/70 bg-background/45 px-4 py-2.5 text-left text-sm text-muted-foreground transition-all duration-200 hover:border-primary/30 hover:bg-primary/10 hover:text-foreground hover:shadow-[0_16px_44px_rgb(95_140_255_/_12%)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex"
+          aria-label="打开全局搜索"
+          onClick={() => setSearchOpen(true)}
+        >
+          <Search className="h-4 w-4 text-primary" aria-hidden="true" />
           <span className="flex-1">搜索用户、角色、菜单...</span>
           <kbd className="rounded-lg border border-border/80 bg-card/80 px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-            ⌘ K
+            Ctrl/⌘ K
           </kbd>
-        </div>
+        </button>
 
         <div className="flex shrink-0 items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl text-muted-foreground md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-2xl md:hidden"
+            aria-label="打开全局搜索"
+            onClick={() => setSearchOpen(true)}
+          >
             <Search className="h-5 w-5" aria-hidden="true" />
-          </div>
+          </Button>
 
           <Button
             variant="ghost"
@@ -99,6 +128,7 @@ export function AppHeader() {
           </Button>
         </div>
       </div>
-    </header>
+      </header>
+    </>
   );
 }
