@@ -14,11 +14,26 @@ type RadioGroupProps = {
   options: RadioOption[];
   onValueChange: (value: string) => void;
   className?: string;
+  "aria-label"?: string;
+  "aria-labelledby"?: string;
 };
 
-function RadioGroup({ name, value, options, onValueChange, className }: RadioGroupProps) {
+function RadioGroup({
+  name,
+  value,
+  options,
+  onValueChange,
+  className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledby,
+}: RadioGroupProps) {
   return (
-    <div role="radiogroup" className={cn("grid gap-2", className)}>
+    <div
+      role="radiogroup"
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
+      className={cn("grid gap-2", className)}
+    >
       {options.map((option) => {
         const checked = option.value === value;
 

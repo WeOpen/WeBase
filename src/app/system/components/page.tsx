@@ -164,6 +164,7 @@ export default function ComponentsPage() {
               value={channel}
               options={channelOptions}
               onValueChange={setChannel}
+              aria-label="Notification channel"
             />
             <div className="rounded-2xl border border-orange-200/50 bg-orange-50/80 p-4 text-sm leading-6 text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300">
               Selected channel: <span className="font-semibold">{channel}</span>
