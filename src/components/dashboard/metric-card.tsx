@@ -15,23 +15,23 @@ const trendConfig = {
   up: {
     label: "Growing",
     icon: ArrowUpRight,
-    tone: "text-emerald-300",
-    chip: "border-emerald-400/20 bg-emerald-400/10 text-emerald-200",
-    fill: "bg-emerald-300/80",
+    tone: "text-orange-600 dark:text-orange-400",
+    chip: "border-orange-200/50 bg-orange-50/80 text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400",
+    fill: "bg-orange-500/80 dark:bg-orange-400/80",
   },
   down: {
     label: "Cooling",
     icon: ArrowDownRight,
-    tone: "text-sky-300",
-    chip: "border-sky-400/20 bg-sky-400/10 text-sky-200",
-    fill: "bg-sky-300/80",
+    tone: "text-muted-foreground",
+    chip: "border-border/60 bg-muted/60 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]",
+    fill: "bg-muted-foreground/45",
   },
   stable: {
     label: "Stable",
     icon: ArrowRight,
     tone: "text-muted-foreground",
-    chip: "border-white/10 bg-white/5 text-muted-foreground",
-    fill: "bg-primary/60",
+    chip: "border-border/60 bg-muted/60 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]",
+    fill: "bg-foreground/45",
   },
 } satisfies Record<DashboardMetric["trend"], TrendConfig>;
 
@@ -50,11 +50,8 @@ export function MetricCard({ metric }: MetricCardProps) {
   const TrendIcon = trend.icon;
 
   return (
-    <article className="admin-surface group relative overflow-hidden p-5 transition duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_28px_80px_rgb(0_0_0_/_36%)]">
-      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
-      <div className="pointer-events-none absolute -right-12 -top-12 size-32 rounded-full bg-primary/10 blur-3xl transition group-hover:bg-primary/20" />
-
-      <div className="relative flex items-start justify-between gap-4">
+    <article className="group relative flex h-full min-w-0 flex-col rounded-xl border border-border/40 bg-card/80 p-5 transition-all duration-200 hover:border-border hover:bg-card hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{metric.label}</p>
           <p className="mt-3 text-3xl font-semibold tracking-tight text-card-foreground">
@@ -72,7 +69,7 @@ export function MetricCard({ metric }: MetricCardProps) {
         </span>
       </div>
 
-      <div className="relative mt-7 flex items-end gap-1.5" aria-hidden="true">
+      <div className="mt-7 flex items-end gap-1.5" aria-hidden="true">
         {trendBars[metric.trend].map((height, index) => (
           <span
             key={`${metric.label}-${height}-${index}`}
@@ -82,7 +79,7 @@ export function MetricCard({ metric }: MetricCardProps) {
         ))}
       </div>
 
-      <p className={cn("relative mt-4 text-xs font-medium", trend.tone)}>
+      <p className={cn("mt-4 text-xs font-medium", trend.tone)}>
         {trend.label} compared with the previous cycle
       </p>
     </article>

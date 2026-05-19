@@ -11,7 +11,7 @@ export function ActivityList({ activities }: ActivityListProps) {
     <section className="admin-surface p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-primary">Live audit</p>
+          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Live audit</p>
           <h2 className="mt-1 text-xl font-semibold tracking-tight">Recent activity</h2>
         </div>
         <Clock3 className="size-5 text-muted-foreground" aria-hidden="true" />
@@ -21,11 +21,11 @@ export function ActivityList({ activities }: ActivityListProps) {
         {activities.map((activity, index) => (
           <article
             key={activity.id}
-            className="group relative rounded-xl border border-transparent px-3 py-3 transition hover:border-border/80 hover:bg-white/[0.03]"
+            className="group relative rounded-xl border border-transparent px-3 py-3 transition hover:border-border/80 hover:bg-accent/50 dark:hover:bg-white/[0.05]"
           >
-            <div className="absolute left-0 top-5 size-2 rounded-full bg-primary shadow-[0_0_18px_rgb(95_140_255_/_65%)]" />
+            <div className="absolute left-0 top-5 size-2 rounded-full bg-orange-500 shadow-[0_0_18px_rgba(249,115,22,0.45)]" />
             {index < activities.length - 1 ? (
-              <div className="absolute bottom-0 left-[3px] top-8 w-px bg-gradient-to-b from-primary/40 to-transparent" />
+              <div className="absolute bottom-0 left-[3px] top-8 w-px bg-gradient-to-b from-orange-500/40 to-transparent" />
             ) : null}
 
             <div className="pl-5">

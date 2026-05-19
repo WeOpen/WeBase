@@ -36,9 +36,9 @@ const themeOptions: Array<{ label: string; value: SystemSettings["defaultTheme"]
 
 function SettingCard({ title, description, icon: Icon, children }: SettingCardProps) {
   return (
-    <section className="admin-surface overflow-hidden p-5 shadow-2xl shadow-black/10">
-      <div className="flex items-start gap-4 border-b border-border/70 pb-5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/10 bg-background/55 text-primary shadow-inner">
+    <section className="admin-surface overflow-hidden p-5">
+      <div className="flex items-start gap-4 border-b border-border/70 pb-5 dark:border-white/[0.06]">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-border/50 bg-muted/50 text-orange-500 shadow-inner dark:border-white/[0.06] dark:bg-white/[0.04]">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
@@ -132,13 +132,10 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <form className="space-y-6" onSubmit={handleSubmit}>
-        <section className="admin-surface relative overflow-hidden p-6 sm:p-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgb(56_189_248_/_16%),transparent_18rem),radial-gradient(circle_at_92%_0%,rgb(16_185_129_/_12%),transparent_16rem)]" />
-          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section className="admin-surface p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-primary">
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
                 <Settings className="h-4 w-4" aria-hidden="true" />
                 System / Settings
               </p>
@@ -150,7 +147,7 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner sm:min-w-72">
+            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Theme</p>
                 <p className="mt-2 text-2xl font-semibold capitalize text-card-foreground">{settings.defaultTheme}</p>
@@ -166,7 +163,7 @@ export default function SettingsPage() {
         {message ? (
           <div className="admin-surface flex items-center justify-between gap-3 p-4 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-300" aria-hidden="true" />
+              <CheckCircle2 className="h-4 w-4 text-orange-500" aria-hidden="true" />
               {message}
             </span>
             <Button variant="ghost" size="sm" onClick={() => setMessage(null)}>
@@ -188,7 +185,7 @@ export default function SettingsPage() {
                 value={settings.systemName}
                 onChange={(event) => updateValue("systemName", event.target.value)}
                 placeholder="WeBase Admin"
-                className="bg-background/55"
+                className="bg-muted/40 dark:bg-white/[0.04]"
               />
             </label>
 
@@ -200,7 +197,7 @@ export default function SettingsPage() {
                 value={settings.logoText}
                 onChange={(event) => updateValue("logoText", event.target.value)}
                 placeholder="WB"
-                className="bg-background/55"
+                className="bg-muted/40 dark:bg-white/[0.04]"
               />
             </label>
 
@@ -209,7 +206,7 @@ export default function SettingsPage() {
               <select
                 value={settings.defaultTheme}
                 onChange={(event) => updateValue("defaultTheme", event.target.value as SystemSettings["defaultTheme"])}
-                className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-10 w-full rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-white/[0.04]"
               >
                 {themeOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -234,9 +231,9 @@ export default function SettingsPage() {
                   type="number"
                   value={settings.sessionTimeout}
                   onChange={(event) => updateValue("sessionTimeout", Number(event.target.value))}
-                  className="bg-background/55"
+                  className="bg-muted/40 dark:bg-white/[0.04]"
                 />
-                <Badge variant="outline" className="border-sky-400/25 bg-sky-400/10 text-sky-200">
+                <Badge variant="outline" className="border-border/60 bg-muted/60 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]">
                   minutes
                 </Badge>
               </div>
@@ -259,7 +256,7 @@ export default function SettingsPage() {
             description="Choose which channels receive operational admin updates."
             icon={Bell}
           >
-            <label className="flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-background/45 p-4 text-sm text-card-foreground shadow-inner">
+            <label className="flex items-start justify-between gap-4 rounded-2xl border border-border/50 bg-muted/40 dark:border-white/[0.06] dark:bg-white/[0.04] p-4 text-sm text-card-foreground shadow-inner">
               <span>
                 <span className="block font-medium">Email notifications</span>
                 <span className="mt-1 block leading-6 text-muted-foreground">Send important system notices by email.</span>
@@ -268,11 +265,11 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={settings.emailNotification}
                 onChange={(event) => updateValue("emailNotification", event.target.checked)}
-                className="mt-1 h-5 w-5 accent-primary"
+                className="mt-1 h-5 w-5 accent-orange-500"
               />
             </label>
 
-            <label className="flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-background/45 p-4 text-sm text-card-foreground shadow-inner">
+            <label className="flex items-start justify-between gap-4 rounded-2xl border border-border/50 bg-muted/40 dark:border-white/[0.06] dark:bg-white/[0.04] p-4 text-sm text-card-foreground shadow-inner">
               <span>
                 <span className="block font-medium">In-app notifications</span>
                 <span className="mt-1 block leading-6 text-muted-foreground">Show lightweight updates inside the admin shell.</span>
@@ -281,18 +278,18 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={settings.inAppNotification}
                 onChange={(event) => updateValue("inAppNotification", event.target.checked)}
-                className="mt-1 h-5 w-5 accent-primary"
+                className="mt-1 h-5 w-5 accent-orange-500"
               />
             </label>
 
-            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm leading-6 text-emerald-100">
+            <div className="rounded-2xl border border-orange-200/50 bg-orange-50/80 p-4 text-sm leading-6 text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400">
               Active channels: {[settings.emailNotification && "Email", settings.inAppNotification && "In-app"].filter(Boolean).join(" + ") || "None"}
             </div>
           </SettingCard>
 
           {loading ? (
             <div className="absolute inset-0 grid place-items-center rounded-xl bg-background/45 backdrop-blur-sm">
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-card/90 px-4 py-2 text-sm text-muted-foreground shadow-xl">
+              <div className="flex items-center gap-2 rounded-full border border-border/50 bg-background/90 dark:border-white/[0.06] dark:bg-black/70 px-4 py-2 text-sm text-muted-foreground shadow-xl">
                 <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
                 Loading settings
               </div>

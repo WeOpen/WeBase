@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -61,28 +62,39 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#07090f] text-foreground">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-[-18rem] h-[34rem] w-[34rem] rounded-full bg-sky-500/16 blur-3xl" />
-        <div className="absolute right-[-10rem] top-24 h-[30rem] w-[30rem] rounded-full bg-cyan-300/10 blur-3xl" />
-        <div className="absolute bottom-[-16rem] left-1/2 h-[28rem] w-[46rem] -translate-x-1/2 rounded-full bg-blue-950/40 blur-3xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.08)_0_1px,transparent_1px_92px)] opacity-[0.06]" />
-      </div>
+    <main className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 w-full px-2 pb-0 pt-2 sm:px-3 sm:pt-2.5">
+        <div className="mx-auto max-w-[1800px] rounded-2xl border border-black/[0.06] bg-background/90 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.03)] backdrop-blur-2xl dark:border-white/[0.08] dark:bg-black/60 dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)]">
+          <div className="flex h-12 items-center justify-between gap-3 px-2.5 sm:px-4">
+            <Link href="/login" className="group/logo flex items-center gap-1.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/50 bg-foreground text-xs font-bold text-background transition-transform duration-200 group-hover/logo:scale-105">
+                WB
+              </span>
+              <span className="text-[15px] font-bold tracking-tight text-foreground">
+                We<span className="text-orange-500">Base</span>
+              </span>
+            </Link>
+            <span className="hidden rounded-lg border border-border/50 px-2.5 py-1.5 text-xs font-medium text-muted-foreground sm:inline-flex dark:border-white/[0.06]">
+              Admin scaffold
+            </span>
+          </div>
+        </div>
+      </header>
 
-      <section className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
-        <div className="grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+      <section className="px-2 py-12 sm:px-3 sm:py-16">
+        <div className="mx-auto grid w-full max-w-[1100px] items-center gap-8 lg:grid-cols-[1fr_24rem]">
           <div className="hidden lg:block">
-            <div className="mb-8 inline-flex rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium uppercase tracking-[0.32em] text-sky-100/80 shadow-2xl shadow-black/20 backdrop-blur-xl">
+            <div className="mb-5 inline-flex rounded-full border border-orange-200/50 bg-orange-50/80 px-3 py-1.5 text-xs font-medium text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400">
               WeBase Control Surface
             </div>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-white xl:text-6xl">
+            <h1 className="max-w-3xl text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-foreground xl:text-6xl">
               以清晰、克制的方式掌控后台运营。
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate-300/78">
-              为管理场景准备的暗色优先模板：稳定的层级、精细的玻璃质感，以及面向高频操作的低干扰界面。
+            <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground">
+              通过紧凑圆角、半透明导航和中性卡片层级，聚焦后台管理的用户、角色、菜单和设置内容。
             </p>
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
+            <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
               {[
                 ["01", "会话安全"],
                 ["02", "权限治理"],
@@ -90,101 +102,99 @@ export default function LoginPage() {
               ].map(([index, label]) => (
                 <div
                   key={index}
-                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4 shadow-2xl shadow-black/20 backdrop-blur-xl"
+                  className="rounded-xl border border-border/40 bg-card/80 p-4 transition-all duration-200 hover:border-border hover:bg-card hover:shadow-md"
                 >
-                  <div className="text-xs text-sky-100/50">{index}</div>
-                  <div className="mt-5 text-sm font-medium text-slate-100">{label}</div>
+                  <div className="text-xs text-muted-foreground/60">{index}</div>
+                  <div className="mt-5 text-sm font-medium text-foreground">{label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-md">
-            <div className="rounded-[2rem] border border-white/12 bg-[#0f141d]/72 p-2 shadow-[0_32px_90px_rgba(0,0,0,0.44)] backdrop-blur-2xl">
-              <div className="rounded-[1.55rem] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.025))] p-8 sm:p-9">
-                <div className="mb-8 flex items-start justify-between gap-4">
-                  <div>
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-200/15 bg-sky-300/10 text-lg font-semibold text-sky-100 shadow-lg shadow-sky-950/30">
-                      W
-                    </div>
-                    <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white">
-                      登录 WeBase
-                    </h2>
-                    <p className="mt-3 text-sm leading-6 text-slate-300/72">
-                      使用演示账号进入管理控制台。
-                    </p>
+          <div className="mx-auto w-full max-w-md rounded-xl border border-border/40 bg-card/80 p-2 shadow-lg shadow-black/5 dark:shadow-black/20">
+            <div className="rounded-xl border border-border/40 bg-background/70 p-6 sm:p-7 dark:border-white/[0.06] dark:bg-white/[0.03]">
+              <div className="mb-7 flex items-start justify-between gap-4">
+                <div>
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border/50 bg-foreground text-lg font-semibold text-background">
+                    W
                   </div>
-                  <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-100/90">
-                    Demo
-                  </span>
+                  <h2 className="text-3xl font-semibold tracking-[-0.03em] text-foreground">
+                    登录 WeBase
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    使用演示账号进入管理控制台。
+                  </p>
+                </div>
+                <span className="rounded-full border border-orange-200/50 bg-orange-50/80 px-3 py-1 text-xs font-medium text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400">
+                  Demo
+                </span>
+              </div>
+
+              <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground" htmlFor="username">
+                    用户名
+                  </label>
+                  <Input
+                    id="username"
+                    autoComplete="username"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    aria-invalid={errorField === "username"}
+                    aria-describedby={errorField === "username" ? loginErrorId : undefined}
+                    className="h-11 rounded-xl border-border bg-muted/40 px-4 dark:border-white/[0.08] dark:bg-white/[0.04]"
+                    placeholder="请输入用户名"
+                  />
                 </div>
 
-                <form className="space-y-5" onSubmit={handleSubmit} noValidate>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100" htmlFor="username">
-                      用户名
-                    </label>
-                    <Input
-                      id="username"
-                      autoComplete="username"
-                      value={username}
-                      onChange={(event) => setUsername(event.target.value)}
-                      aria-invalid={errorField === "username"}
-                      aria-describedby={errorField === "username" ? loginErrorId : undefined}
-                      className="h-12 rounded-2xl border-white/10 bg-black/20 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-300/70"
-                      placeholder="请输入用户名"
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground" htmlFor="password">
+                    密码
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    aria-invalid={errorField === "password"}
+                    aria-describedby={errorField === "password" ? loginErrorId : undefined}
+                    className="h-11 rounded-xl border-border bg-muted/40 px-4 dark:border-white/[0.08] dark:bg-white/[0.04]"
+                    placeholder="请输入密码"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <label className="inline-flex cursor-pointer items-center gap-3 text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      checked={remember}
+                      onChange={(event) => setRemember(event.target.checked)}
+                      className="h-4 w-4 rounded border-border bg-muted/40 accent-orange-500"
                     />
-                  </div>
+                    记住登录状态
+                  </label>
+                  <span className="text-xs text-muted-foreground">admin / admin123</span>
+                </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100" htmlFor="password">
-                      密码
-                    </label>
-                    <Input
-                      id="password"
-                      type="password"
-                      autoComplete="current-password"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      aria-invalid={errorField === "password"}
-                      aria-describedby={errorField === "password" ? loginErrorId : undefined}
-                      className="h-12 rounded-2xl border-white/10 bg-black/20 px-4 text-white placeholder:text-slate-500 focus-visible:ring-sky-300/70"
-                      placeholder="请输入密码"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 text-sm">
-                    <label className="inline-flex cursor-pointer items-center gap-3 text-slate-300/78">
-                      <input
-                        type="checkbox"
-                        checked={remember}
-                        onChange={(event) => setRemember(event.target.checked)}
-                        className="h-4 w-4 rounded border-white/20 bg-black/30 accent-sky-400"
-                      />
-                      记住登录状态
-                    </label>
-                    <span className="text-xs text-slate-400">admin / admin123</span>
-                  </div>
-
-                  {error ? (
-                    <div
-                      id={loginErrorId}
-                      role="alert"
-                      className="rounded-2xl border border-red-300/20 bg-red-400/10 px-4 py-3 text-sm text-red-100"
-                    >
-                      {error}
-                    </div>
-                  ) : null}
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="h-12 w-full rounded-2xl border border-sky-200/20 bg-sky-300/16 text-base font-semibold text-white shadow-[0_18px_45px_rgba(56,189,248,0.16)] hover:bg-sky-300/22"
+                {error ? (
+                  <div
+                    id={loginErrorId}
+                    role="alert"
+                    className="rounded-xl border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm text-destructive"
                   >
-                    {loading ? "正在登录..." : "进入控制台"}
-                  </Button>
-                </form>
-              </div>
+                    {error}
+                  </div>
+                ) : null}
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="h-11 w-full rounded-xl bg-foreground text-base font-semibold text-background hover:bg-foreground/90"
+                >
+                  {loading ? "正在登录..." : "进入控制台"}
+                </Button>
+              </form>
             </div>
           </div>
         </div>

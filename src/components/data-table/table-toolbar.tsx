@@ -55,7 +55,7 @@ export function TableToolbar({
           value={keyword}
           onChange={(event) => onKeywordChange(event.target.value)}
           placeholder="Search by keyword..."
-          className="bg-background/55"
+          className="bg-muted/40 dark:bg-white/[0.04]"
         />
 
         <label className="sr-only" htmlFor={statusId}>
@@ -65,7 +65,7 @@ export function TableToolbar({
           id={statusId}
           value={status}
           onChange={(event) => onStatusChange(event.target.value)}
-          className="h-10 rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-10 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/[0.04]"
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>

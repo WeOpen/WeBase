@@ -44,7 +44,7 @@ export function DataTable<T>({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[42rem] border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-border/80 bg-white/[0.03] text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            <tr className="border-b border-border/60 bg-muted/40 text-xs uppercase tracking-[0.18em] text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.03]">
               {columns.map((column) => (
                 <th
                   key={column.key}
@@ -61,7 +61,7 @@ export function DataTable<T>({
               data.map((record, index) => (
                 <tr
                   key={getRecordKey(record, index, rowKey)}
-                  className="transition-colors hover:bg-white/[0.035]"
+                  className="transition-colors hover:bg-accent/50 dark:hover:bg-white/[0.05]"
                 >
                   {columns.map((column) => (
                     <td

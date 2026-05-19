@@ -179,7 +179,7 @@ export function UserFormDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={title}
-      className="border-white/10 bg-card/95 backdrop-blur-xl"
+      className="border-border/40 bg-card/95 backdrop-blur-xl dark:border-white/[0.08]"
     >
       <UserForm
         key={formKey}

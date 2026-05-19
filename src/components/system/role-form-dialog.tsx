@@ -208,7 +208,7 @@ function RoleForm({
         </label>
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner">
+      <section className="rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner dark:border-white/[0.06] dark:bg-white/[0.04]">
         <div className="flex flex-col gap-3 border-b border-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h3 className="text-sm font-semibold text-card-foreground">Menu permissions</h3>
@@ -232,15 +232,15 @@ function RoleForm({
                 className={cn(
                   "group flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-colors",
                   checked
-                    ? "border-primary/35 bg-primary/10 text-card-foreground"
-                    : "border-white/10 bg-card/40 text-muted-foreground hover:border-white/20 hover:bg-white/[0.04]",
+                    ? "border-orange-200/50 bg-orange-50/80 text-card-foreground dark:border-orange-500/20 dark:bg-orange-500/10"
+                    : "border-border/50 bg-card/60 text-muted-foreground hover:border-border hover:bg-accent/50 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:bg-white/[0.05]",
                 )}
               >
                 <input
                   type="checkbox"
                   checked={checked}
                   onChange={() => togglePermission(permission)}
-                  className="mt-1 h-4 w-4 rounded border-border bg-background accent-primary"
+                  className="mt-1 h-4 w-4 rounded border-border bg-background accent-orange-500"
                 />
                 <span>
                   <span className="block text-sm font-medium text-card-foreground">{menu.name}</span>
@@ -289,7 +289,7 @@ export function RoleFormDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={title}
-      className="border-white/10 bg-card/95 backdrop-blur-xl sm:max-w-3xl"
+      className="border-border/40 bg-card/95 backdrop-blur-xl sm:max-w-3xl dark:border-white/[0.08]"
     >
       <RoleForm
         key={formKey}
