@@ -173,6 +173,7 @@ export function AppHeader() {
                 ["/system/users", "用户"],
                 ["/system/roles", "角色"],
                 ["/system/menus", "菜单"],
+                ["/system/components", "组件"],
               ].map(([href, label]) => {
                 const active = pathname === href || pathname.startsWith(`${href}/`);
 
