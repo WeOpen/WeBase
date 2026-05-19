@@ -206,7 +206,7 @@ export function MenuFormDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={title}
-      className="border-white/10 bg-card/95 backdrop-blur-xl sm:max-w-2xl"
+      className="border-border/40 bg-card/95 backdrop-blur-xl sm:max-w-2xl dark:border-white/[0.08]"
     >
       <MenuForm
         key={formKey}

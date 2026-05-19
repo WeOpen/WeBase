@@ -210,7 +210,7 @@ export default function MenusPage() {
             record.level === 1 && "pl-6 before:h-px before:w-4 before:bg-border",
           )}
         >
-          <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-background/55 text-primary shadow-inner">
+          <span className="grid h-9 w-9 place-items-center rounded-xl border border-border/50 bg-muted/50 text-orange-500 shadow-inner dark:border-white/[0.06] dark:bg-white/[0.04]">
             <MenuIcon className="h-4 w-4" aria-hidden="true" />
           </span>
           <div>
@@ -231,7 +231,7 @@ export default function MenusPage() {
       key: "icon",
       title: "Icon",
       render: (record) => (
-        <Badge variant="outline" className="border-sky-400/25 bg-sky-400/10 font-mono text-sky-200">
+        <Badge variant="outline" className="border-border/60 bg-muted/60 font-mono text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]">
           {record.icon}
         </Badge>
       ),
@@ -249,8 +249,8 @@ export default function MenusPage() {
           variant="outline"
           className={
             record.status === "enabled"
-              ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-300"
-              : "border-amber-400/25 bg-amber-400/10 text-amber-200"
+              ? "border-orange-200/50 bg-orange-50/80 text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400"
+              : "border-border/60 bg-muted/60 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]"
           }
         >
           {formatStatus(record.status)}
@@ -279,13 +279,10 @@ export default function MenusPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface relative overflow-hidden p-6 sm:p-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_8%,rgb(34_197_94_/_16%),transparent_18rem),radial-gradient(circle_at_88%_0%,rgb(56_189_248_/_14%),transparent_16rem)]" />
-          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section className="admin-surface p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-primary">
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
                 <GitBranch className="h-4 w-4" aria-hidden="true" />
                 System / Menus
               </p>
@@ -297,7 +294,7 @@ export default function MenusPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner sm:min-w-72">
+            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Root</p>
                 <p className="mt-2 text-2xl font-semibold text-card-foreground">{rootCount}</p>
@@ -347,7 +344,7 @@ export default function MenusPage() {
           />
           {loading ? (
             <div className="absolute inset-0 grid place-items-center rounded-xl bg-background/45 backdrop-blur-sm">
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-card/90 px-4 py-2 text-sm text-muted-foreground shadow-xl">
+              <div className="flex items-center gap-2 rounded-full border border-border/50 bg-background/90 dark:border-white/[0.06] dark:bg-black/70 px-4 py-2 text-sm text-muted-foreground shadow-xl">
                 <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
                 Loading menus
               </div>
@@ -357,7 +354,7 @@ export default function MenusPage() {
 
         <div className="admin-surface flex flex-col gap-3 p-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span className="inline-flex items-center gap-2">
-            <Route className="h-4 w-4 text-primary" aria-hidden="true" />
+            <Route className="h-4 w-4 text-orange-500" aria-hidden="true" />
             Showing {filteredMenus.length} of {menus.length} menus in a one-level tree view.
           </span>
           <span>Route convention: /system/menus</span>

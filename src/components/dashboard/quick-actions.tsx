@@ -33,10 +33,10 @@ export function QuickActions() {
     <section className="admin-surface p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-primary">Command center</p>
+          <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Command center</p>
           <h2 className="mt-1 text-xl font-semibold tracking-tight">Quick actions</h2>
         </div>
-        <div className="hidden rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-muted-foreground sm:block">
+        <div className="hidden rounded-full border border-border/50 bg-muted/60 px-3 py-1 text-xs text-muted-foreground sm:block dark:border-white/[0.06] dark:bg-white/[0.04]">
           System
         </div>
       </div>
@@ -49,16 +49,16 @@ export function QuickActions() {
             <Link
               key={action.href}
               href={action.href}
-              className="group rounded-xl border border-border/80 bg-white/[0.025] p-4 transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/[0.07]"
+              className="group rounded-xl border border-border/40 bg-card/80 p-4 transition-all duration-200 hover:border-border hover:bg-card hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20"
             >
               <div className="flex items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-background/50 text-primary shadow-inner">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-border/50 bg-muted/50 text-orange-500 shadow-inner dark:border-white/[0.06] dark:bg-white/[0.04]">
                   <Icon className="size-4" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center justify-between gap-2 text-sm font-semibold text-card-foreground">
                     {action.label}
-                    <ChevronRight className="size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
+                    <ChevronRight className="size-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-orange-500" aria-hidden="true" />
                   </span>
                   <span className="mt-1 block text-sm leading-5 text-muted-foreground">
                     {action.description}

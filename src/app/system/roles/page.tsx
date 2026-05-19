@@ -267,7 +267,7 @@ export default function RolesPage() {
       title: "Menus",
       render: (record) => (
         <div>
-          <Badge variant="outline" className="border-sky-400/25 bg-sky-400/10 text-sky-200">
+          <Badge variant="outline" className="border-orange-200/50 bg-orange-50/80 text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400">
             {rolePermissionCount(record, enabledMenus)} / {enabledMenus.length}
           </Badge>
           <div className="mt-1 text-xs text-muted-foreground">{getPermissionPreview(record, enabledMenus)}</div>
@@ -292,8 +292,8 @@ export default function RolesPage() {
           variant="outline"
           className={
             record.status === "enabled"
-              ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-300"
-              : "border-amber-400/25 bg-amber-400/10 text-amber-200"
+              ? "border-orange-200/50 bg-orange-50/80 text-orange-600 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400"
+              : "border-border/60 bg-muted/60 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.04]"
           }
         >
           {formatStatus(record.status)}
@@ -322,13 +322,10 @@ export default function RolesPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface relative overflow-hidden p-6 sm:p-8">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgb(14_165_233_/_18%),transparent_18rem),radial-gradient(circle_at_88%_0%,rgb(99_102_241_/_14%),transparent_16rem)]" />
-          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <section className="admin-surface p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-primary">
+              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
                 <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                 System / Roles
               </p>
@@ -340,7 +337,7 @@ export default function RolesPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-white/10 bg-background/45 p-4 shadow-inner sm:min-w-72">
+            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Roles</p>
                 <p className="mt-2 text-2xl font-semibold text-card-foreground">{total}</p>
@@ -390,7 +387,7 @@ export default function RolesPage() {
           />
           {loading ? (
             <div className="absolute inset-0 grid place-items-center rounded-xl bg-background/45 backdrop-blur-sm">
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-card/90 px-4 py-2 text-sm text-muted-foreground shadow-xl">
+              <div className="flex items-center gap-2 rounded-full border border-border/50 bg-background/90 dark:border-white/[0.06] dark:bg-black/70 px-4 py-2 text-sm text-muted-foreground shadow-xl">
                 <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" />
                 Loading roles
               </div>
@@ -400,7 +397,7 @@ export default function RolesPage() {
 
         <div className="admin-surface flex flex-col gap-3 p-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span className="inline-flex items-center gap-2">
-            <KeyRound className="h-4 w-4 text-primary" aria-hidden="true" />
+            <KeyRound className="h-4 w-4 text-orange-500" aria-hidden="true" />
             Permissions stay menu-level only for this scaffold.
           </span>
           <Pagination page={currentPage} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />

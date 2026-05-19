@@ -119,7 +119,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
     >
       <div className="rounded-3xl border border-border/70 bg-background/30 p-3 sm:p-4">
         <div className="flex items-center gap-3 rounded-2xl border border-border/75 bg-background/65 px-4 py-3 shadow-inner">
-          <Search className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+          <Search className="h-5 w-5 shrink-0 text-orange-500" aria-hidden="true" />
           <Input
             ref={searchInputRef}
             value={query}
@@ -147,11 +147,11 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
                   onClick={() => handleSelect(result)}
                   className={cn(
                     "group flex w-full items-center gap-3 rounded-2xl border border-transparent p-3 text-left transition-all duration-200",
-                    "hover:border-primary/30 hover:bg-primary/10 hover:shadow-[0_18px_48px_rgb(95_140_255_/_14%)]",
+                    "hover:border-border hover:bg-accent/50 hover:shadow-lg hover:shadow-black/5 dark:hover:bg-white/[0.05] dark:hover:shadow-black/20",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   )}
                 >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-border/75 bg-background/60 text-muted-foreground transition-colors group-hover:border-primary/30 group-hover:bg-primary/15 group-hover:text-primary">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-border/75 bg-background/60 text-muted-foreground transition-colors group-hover:border-border group-hover:bg-accent/50 group-hover:text-orange-500">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">
