@@ -20,6 +20,7 @@ type DialogCommonProps = {
   children: React.ReactNode;
   className?: string;
   initialFocusRef?: React.RefObject<HTMLElement | null>;
+  ariaDescribedBy?: string;
 };
 
 type DialogAccessibleName =
@@ -42,6 +43,7 @@ export function Dialog({
   children,
   className,
   initialFocusRef,
+  ariaDescribedBy,
 }: DialogProps) {
   const titleId = React.useId();
   const contentRef = React.useRef<HTMLElement>(null);
@@ -142,6 +144,7 @@ export function Dialog({
         aria-modal="true"
         aria-label={title ? undefined : ariaLabel}
         aria-labelledby={title ? titleId : undefined}
+        aria-describedby={ariaDescribedBy}
         tabIndex={-1}
         onKeyDown={handleKeyDown}
         className={cn(

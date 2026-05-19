@@ -9,6 +9,8 @@ import { AppShell } from "@/components/layout/app-shell";
 import { MenuFormDialog, type MenuFormValues } from "@/components/system/menu-form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast-provider";
 import type { MenuRecord, Status } from "@/lib/api/types";
 import { createMenu, deleteMenu, listMenus, updateMenu } from "@/lib/services/menu-service";
 import { cn } from "@/lib/utils";
@@ -61,13 +63,16 @@ function flattenMenusOneLevel(menus: MenuRecord[]): FlatMenuRecord[] {
 }
 
 export default function MenusPage() {
+  const { toast } = useToast();
   const [keyword, setKeyword] = React.useState("");
   const [status, setStatus] = React.useState<StatusFilter>("all");
   const [menus, setMenus] = React.useState<MenuRecord[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<MenuRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<MenuRecord | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
 
   const flattenedMenus = React.useMemo(() => flattenMenusOneLevel(menus), [menus]);
@@ -152,17 +157,21 @@ export default function MenusPage() {
     try {
       if (editing) {
         await updateMenu(editing.id, values);
-        setMessage("Menu updated successfully.");
+        toast({ title: "Menu updated", description: `${values.name} was updated successfully.`, variant: "success" });
       } else {
         await createMenu(values);
-        setMessage("Menu created successfully.");
+        toast({ title: "Menu created", description: `${values.name} was added successfully.`, variant: "success" });
       }
 
       setDialogOpen(false);
       setEditing(null);
       await reloadMenus({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to save menu.");
+      toast({
+        title: "Save failed",
+        description: error instanceof Error ? error.message : "Failed to save menu.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -174,28 +183,46 @@ export default function MenusPage() {
 
     try {
       await updateMenu(record.id, { status: nextStatus });
-      setMessage(`${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`);
+      toast({
+        title: "Menu status updated",
+        description: `${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`,
+        variant: "success",
+      });
       await reloadMenus({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to update status.");
+      toast({
+        title: "Status update failed",
+        description: error instanceof Error ? error.message : "Failed to update status.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDelete = async (record: MenuRecord) => {
-    const confirmed = window.confirm(`Delete menu ${record.name}? This action only affects mock data.`);
-
-    if (!confirmed) {
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) {
       return;
     }
 
+    setDeleting(true);
     setMessage(null);
 
     try {
-      await deleteMenu(record.id);
-      setMessage("Menu deleted successfully.");
+      await deleteMenu(deleteTarget.id);
+      toast({
+        title: "Menu deleted",
+        description: `${deleteTarget.name} was removed from mock data.`,
+        variant: "success",
+      });
+      setDeleteTarget(null);
       await reloadMenus({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete menu.");
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "Failed to delete menu.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -268,7 +295,7 @@ export default function MenusPage() {
           <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(record)}>
             {record.status === "enabled" ? "Disable" : "Enable"}
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(record)}>
+          <Button variant="destructive" size="sm" onClick={() => setDeleteTarget(record)}>
             Delete
           </Button>
         </div>
@@ -374,6 +401,19 @@ export default function MenusPage() {
           }
         }}
         onSubmit={handleSubmit}
+      />
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+          }
+        }}
+        title="Delete menu"
+        description={deleteTarget ? `Delete ${deleteTarget.name}? This action only affects mock data.` : "Delete this menu?"}
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
       />
     </AppShell>
   );

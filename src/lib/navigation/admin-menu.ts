@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Blocks,
   Gauge,
   MenuSquare,
   Settings,
@@ -34,6 +35,11 @@ export const adminMenu: AdminMenuItem[] = [
     title: "菜单管理",
     href: "/system/menus",
     icon: MenuSquare,
+  },
+  {
+    title: "组件示例",
+    href: "/system/components",
+    icon: Blocks,
   },
   {
     title: "系统设置",
