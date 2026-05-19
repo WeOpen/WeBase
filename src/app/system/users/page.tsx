@@ -10,6 +10,8 @@ import { AppShell } from "@/components/layout/app-shell";
 import { UserFormDialog, type UserFormValues } from "@/components/system/user-form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast-provider";
 import type { Status, UserRecord } from "@/lib/api/types";
 import {
   createUser,
@@ -35,6 +37,7 @@ function formatDate(value: string) {
 }
 
 export default function UsersPage() {
+  const { toast } = useToast();
   const [keyword, setKeyword] = React.useState("");
   const [status, setStatus] = React.useState<StatusFilter>("all");
   const [page, setPage] = React.useState(1);
@@ -43,7 +46,9 @@ export default function UsersPage() {
   const [loading, setLoading] = React.useState(true);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<UserRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<UserRecord | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
 
   const reloadUsers = React.useCallback(async (options?: { preserveMessage?: boolean }) => {
@@ -138,20 +143,24 @@ export default function UsersPage() {
     try {
       if (editing) {
         await updateUser(editing.id, values);
-        setMessage("User updated successfully.");
+        toast({ title: "User updated", description: `${values.name} was updated successfully.`, variant: "success" });
       } else {
         await createUser({
           ...values,
           createdAt: new Date().toISOString(),
         });
-        setMessage("User created successfully.");
+        toast({ title: "User created", description: `${values.name} was added successfully.`, variant: "success" });
       }
 
       setDialogOpen(false);
       setEditing(null);
       await reloadUsers({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to save user.");
+      toast({
+        title: "Save failed",
+        description: error instanceof Error ? error.message : "Failed to save user.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -163,25 +172,37 @@ export default function UsersPage() {
 
     try {
       await updateUser(record.id, { status: nextStatus });
-      setMessage(`${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`);
+      toast({
+        title: "User status updated",
+        description: `${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`,
+        variant: "success",
+      });
       await reloadUsers({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to update status.");
+      toast({
+        title: "Status update failed",
+        description: error instanceof Error ? error.message : "Failed to update status.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDelete = async (record: UserRecord) => {
-    const confirmed = window.confirm(`Delete user ${record.name}? This action only affects mock data.`);
-
-    if (!confirmed) {
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) {
       return;
     }
 
+    setDeleting(true);
     setMessage(null);
 
     try {
-      await deleteUser(record.id);
-      setMessage("User deleted successfully.");
+      await deleteUser(deleteTarget.id);
+      toast({
+        title: "User deleted",
+        description: `${deleteTarget.name} was removed from mock data.`,
+        variant: "success",
+      });
+      setDeleteTarget(null);
 
       const remainingOnPage = records.length - 1;
       const shouldGoPrevious = remainingOnPage <= 0 && page > 1;
@@ -193,7 +214,13 @@ export default function UsersPage() {
         await reloadUsers({ preserveMessage: true });
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete user.");
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "Failed to delete user.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -254,7 +281,7 @@ export default function UsersPage() {
           <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(record)}>
             {record.status === "enabled" ? "Disable" : "Enable"}
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(record)}>
+          <Button variant="destructive" size="sm" onClick={() => setDeleteTarget(record)}>
             Delete
           </Button>
         </div>
@@ -353,6 +380,19 @@ export default function UsersPage() {
           }
         }}
         onSubmit={handleSubmit}
+      />
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+          }
+        }}
+        title="Delete user"
+        description={deleteTarget ? `Delete ${deleteTarget.name}? This action only affects mock data.` : "Delete this user?"}
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
       />
     </AppShell>
   );

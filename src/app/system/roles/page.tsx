@@ -14,6 +14,8 @@ import {
 } from "@/components/system/role-form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast-provider";
 import type { MenuRecord, RoleRecord, Status } from "@/lib/api/types";
 import { listMenus } from "@/lib/services/menu-service";
 import { createRole, deleteRole, listRoles, updateRole } from "@/lib/services/role-service";
@@ -89,6 +91,7 @@ function getPermissionPreview(role: RoleRecord, menus: MenuRecord[]) {
 }
 
 export default function RolesPage() {
+  const { toast } = useToast();
   const [keyword, setKeyword] = React.useState("");
   const [status, setStatus] = React.useState<StatusFilter>("all");
   const [page, setPage] = React.useState(1);
@@ -97,7 +100,9 @@ export default function RolesPage() {
   const [loading, setLoading] = React.useState(true);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<RoleRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<RoleRecord | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
 
   const enabledMenus = React.useMemo(() => menus.filter((menu) => menu.status === "enabled"), [menus]);
@@ -194,20 +199,24 @@ export default function RolesPage() {
     try {
       if (editing) {
         await updateRole(editing.id, values);
-        setMessage("Role updated successfully.");
+        toast({ title: "Role updated", description: `${values.name} was updated successfully.`, variant: "success" });
       } else {
         await createRole({
           ...values,
           userCount: 0,
         });
-        setMessage("Role created successfully.");
+        toast({ title: "Role created", description: `${values.name} was added successfully.`, variant: "success" });
       }
 
       setDialogOpen(false);
       setEditing(null);
       await reloadRoles({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to save role.");
+      toast({
+        title: "Save failed",
+        description: error instanceof Error ? error.message : "Failed to save role.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -219,28 +228,46 @@ export default function RolesPage() {
 
     try {
       await updateRole(record.id, { status: nextStatus });
-      setMessage(`${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`);
+      toast({
+        title: "Role status updated",
+        description: `${record.name} is now ${formatStatus(nextStatus).toLowerCase()}.`,
+        variant: "success",
+      });
       await reloadRoles({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to update status.");
+      toast({
+        title: "Status update failed",
+        description: error instanceof Error ? error.message : "Failed to update status.",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDelete = async (record: RoleRecord) => {
-    const confirmed = window.confirm(`Delete role ${record.name}? This action only affects mock data.`);
-
-    if (!confirmed) {
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) {
       return;
     }
 
+    setDeleting(true);
     setMessage(null);
 
     try {
-      await deleteRole(record.id);
-      setMessage("Role deleted successfully.");
+      await deleteRole(deleteTarget.id);
+      toast({
+        title: "Role deleted",
+        description: `${deleteTarget.name} was removed from mock data.`,
+        variant: "success",
+      });
+      setDeleteTarget(null);
       await reloadRoles({ preserveMessage: true });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Failed to delete role.");
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "Failed to delete role.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -311,7 +338,7 @@ export default function RolesPage() {
           <Button variant="ghost" size="sm" onClick={() => handleToggleStatus(record)}>
             {record.status === "enabled" ? "Disable" : "Enable"}
           </Button>
-          <Button variant="destructive" size="sm" onClick={() => handleDelete(record)}>
+          <Button variant="destructive" size="sm" onClick={() => setDeleteTarget(record)}>
             Delete
           </Button>
         </div>
@@ -417,6 +444,19 @@ export default function RolesPage() {
           }
         }}
         onSubmit={handleSubmit}
+      />
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+          }
+        }}
+        title="Delete role"
+        description={deleteTarget ? `Delete ${deleteTarget.name}? This action only affects mock data.` : "Delete this role?"}
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
       />
     </AppShell>
   );
