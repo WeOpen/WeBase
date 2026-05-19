@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Blocks, CheckCircle2, MousePointerClick, ShieldCheck } from "lucide-react";
+import { Bell, CheckCircle2, MousePointerClick, ShieldCheck } from "lucide-react";
 import * as React from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -76,33 +76,19 @@ export default function ComponentsPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
-                <Blocks className="h-4 w-4" aria-hidden="true" />
-                System / Components
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
-                Admin components for consistent control surfaces.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                Preview reusable form, feedback, and confirmation primitives in the same neutral WeBase visual system.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Primitives</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">7</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Style</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">1:1</p>
-              </div>
-            </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.24em] text-orange-600 dark:text-orange-400">
+              System / Components
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-card-foreground">
+              Component gallery
+            </h1>
           </div>
-        </section>
+          <Badge variant="outline" className="w-fit bg-muted/40 text-muted-foreground">
+            Full custom UI coverage
+          </Badge>
+        </div>
 
         <div className="grid gap-5 xl:grid-cols-2">
           <ShowcaseCard

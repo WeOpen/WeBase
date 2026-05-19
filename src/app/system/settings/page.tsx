@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CheckCircle2, LockKeyhole, RefreshCw, Save, Settings, SlidersHorizontal } from "lucide-react";
+import { Bell, CheckCircle2, LockKeyhole, RefreshCw, Save, SlidersHorizontal } from "lucide-react";
 import * as React from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -134,34 +134,6 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <form className="space-y-6" onSubmit={handleSubmit}>
-        <section className="admin-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
-                <Settings className="h-4 w-4" aria-hidden="true" />
-                System / Settings
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
-                System preferences tuned from one calm console.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                Adjust the admin identity, session policy, and notification channels backed by the existing settings service.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Theme</p>
-                <p className="mt-2 text-2xl font-semibold capitalize text-card-foreground">{settings.defaultTheme}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Session</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">{settings.sessionTimeout}m</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {message ? (
           <div className="admin-surface flex items-center justify-between gap-3 p-4 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">
@@ -297,7 +269,15 @@ export default function SettingsPage() {
         </div>
 
         <div className="admin-surface flex flex-col gap-3 p-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>Route convention: /system/settings</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span>Route convention: /system/settings</span>
+            <Badge variant="outline" className="bg-muted/40 capitalize text-muted-foreground">
+              Theme: {settings.defaultTheme}
+            </Badge>
+            <Badge variant="outline" className="bg-muted/40 text-muted-foreground">
+              Session: {settings.sessionTimeout}m
+            </Badge>
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={() => void loadSettings()} disabled={loading || submitting}>
               <RefreshCw className="h-4 w-4" aria-hidden="true" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { GitBranch, Menu as MenuIcon, Plus, RefreshCw, Route } from "lucide-react";
+import { Menu as MenuIcon, Plus, RefreshCw, Route } from "lucide-react";
 import * as React from "react";
 
 import { DataTable, type DataTableColumn } from "@/components/data-table/data-table";
@@ -306,41 +306,19 @@ export default function MenusPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
-                <GitBranch className="h-4 w-4" aria-hidden="true" />
-                System / Menus
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
-                Menu routes mapped with one-level clarity.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                Create, edit, disable, and remove mock navigation entries while preserving a focused parent-child route map.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Root</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">{rootCount}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Children</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">{childCount}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <TableToolbar
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           status={status}
           onStatusChange={handleStatusChange}
           action={
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="bg-muted/40 text-muted-foreground">
+                {rootCount} root
+              </Badge>
+              <Badge variant="outline" className="bg-muted/40 text-muted-foreground">
+                {childCount} children
+              </Badge>
               <Button variant="outline" onClick={() => void reloadMenus()} disabled={loading}>
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
                 Refresh
