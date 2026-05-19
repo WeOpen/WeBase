@@ -5,6 +5,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { MenuRecord, Status } from "@/lib/api/types";
 
 export interface MenuFormValues {
@@ -112,10 +113,10 @@ function MenuForm({
 
         <label className="space-y-2 text-sm font-medium text-card-foreground">
           <span>Parent menu</span>
-          <select
+          <Select
             value={values.parentId ?? ""}
             onChange={(event) => updateValue("parentId", event.target.value || undefined)}
-            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-background/70"
           >
             <option value="">Root menu</option>
             {parentOptions.map((menu) => (
@@ -123,7 +124,7 @@ function MenuForm({
                 {menu.name}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
 
         <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
@@ -162,14 +163,14 @@ function MenuForm({
 
         <label className="space-y-2 text-sm font-medium text-card-foreground">
           <span>Status</span>
-          <select
+          <Select
             value={values.status}
             onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-background/70"
           >
             <option value="enabled">Enabled</option>
             <option value="disabled">Disabled</option>
-          </select>
+          </Select>
         </label>
       </div>
 

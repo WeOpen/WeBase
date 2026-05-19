@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import * as authService from "@/lib/services/auth-service";
 import { useAuthStore } from "@/lib/stores/auth-store";
@@ -166,11 +167,9 @@ export default function LoginPage() {
 
                 <div className="flex items-center justify-between gap-4 text-sm">
                   <label className="inline-flex cursor-pointer items-center gap-3 text-muted-foreground">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={remember}
                       onChange={(event) => setRemember(event.target.checked)}
-                      className="h-4 w-4 rounded border-border bg-muted/40 accent-orange-500"
                     />
                     记住登录状态
                   </label>

@@ -6,7 +6,9 @@ import * as React from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { SystemSettings } from "@/lib/api/types";
 import { getSettings, updateSettings } from "@/lib/services/settings-service";
@@ -203,17 +205,16 @@ export default function SettingsPage() {
 
             <label className="space-y-2 text-sm font-medium text-card-foreground">
               <span>Default theme</span>
-              <select
+              <Select
                 value={settings.defaultTheme}
                 onChange={(event) => updateValue("defaultTheme", event.target.value as SystemSettings["defaultTheme"])}
-                className="h-10 w-full rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-white/[0.04]"
               >
                 {themeOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </label>
           </SettingCard>
 
@@ -261,11 +262,10 @@ export default function SettingsPage() {
                 <span className="block font-medium">Email notifications</span>
                 <span className="mt-1 block leading-6 text-muted-foreground">Send important system notices by email.</span>
               </span>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={settings.emailNotification}
                 onChange={(event) => updateValue("emailNotification", event.target.checked)}
-                className="mt-1 h-5 w-5 accent-orange-500"
+                className="mt-1 h-5 w-5"
               />
             </label>
 
@@ -274,11 +274,10 @@ export default function SettingsPage() {
                 <span className="block font-medium">In-app notifications</span>
                 <span className="mt-1 block leading-6 text-muted-foreground">Show lightweight updates inside the admin shell.</span>
               </span>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={settings.inAppNotification}
                 onChange={(event) => updateValue("inAppNotification", event.target.checked)}
-                className="mt-1 h-5 w-5 accent-orange-500"
+                className="mt-1 h-5 w-5"
               />
             </label>
 

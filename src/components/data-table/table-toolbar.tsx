@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 export interface TableToolbarStatusOption {
@@ -61,18 +62,18 @@ export function TableToolbar({
         <label className="sr-only" htmlFor={statusId}>
           Filter status
         </label>
-        <select
+        <Select
           id={statusId}
           value={status}
           onChange={(event) => onStatusChange(event.target.value)}
-          className="h-10 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/[0.04]"
+          className="rounded-md"
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {action ? <div className="shrink-0">{action}</div> : null}
