@@ -5,6 +5,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { Status, UserRecord } from "@/lib/api/types";
 
 export interface UserFormValues {
@@ -121,29 +122,29 @@ function UserForm({
 
         <label className="space-y-2 text-sm font-medium text-card-foreground">
           <span>Role</span>
-          <select
+          <Select
             value={values.role}
             onChange={(event) => updateValue("role", event.target.value)}
-            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-background/70"
           >
             {roleOptions.map((role) => (
               <option key={role} value={role}>
                 {role}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
 
         <label className="space-y-2 text-sm font-medium text-card-foreground">
           <span>Status</span>
-          <select
+          <Select
             value={values.status}
             onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-background/70"
           >
             <option value="enabled">Enabled</option>
             <option value="disabled">Disabled</option>
-          </select>
+          </Select>
         </label>
       </div>
 

@@ -3,8 +3,10 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { MenuRecord, RoleRecord, Status } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
@@ -186,14 +188,14 @@ function RoleForm({
 
         <label className="space-y-2 text-sm font-medium text-card-foreground">
           <span>Status</span>
-          <select
+          <Select
             value={values.status}
             onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="h-10 w-full rounded-md border border-border bg-background/70 px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="bg-background/70"
           >
             <option value="enabled">Enabled</option>
             <option value="disabled">Disabled</option>
-          </select>
+          </Select>
         </label>
 
         <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
@@ -236,11 +238,10 @@ function RoleForm({
                     : "border-border/50 bg-card/60 text-muted-foreground hover:border-border hover:bg-accent/50 dark:border-white/[0.06] dark:bg-white/[0.03] dark:hover:bg-white/[0.05]",
                 )}
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={checked}
                   onChange={() => togglePermission(permission)}
-                  className="mt-1 h-4 w-4 rounded border-border bg-background accent-orange-500"
+                  className="mt-1 bg-background"
                 />
                 <span>
                   <span className="block text-sm font-medium text-card-foreground">{menu.name}</span>

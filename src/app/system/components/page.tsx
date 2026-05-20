@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Blocks, CheckCircle2, MousePointerClick, ShieldCheck } from "lucide-react";
+import { Bell, CheckCircle2, MousePointerClick, ShieldCheck } from "lucide-react";
 import * as React from "react";
 
 import { AppShell } from "@/components/layout/app-shell";
@@ -8,10 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/input";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Select } from "@/components/ui/select";
+import { Sheet } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast-provider";
 
 const roleOptions = [
@@ -71,38 +75,30 @@ export default function ComponentsPage() {
   const [channel, setChannel] = React.useState("email");
   const [enabled, setEnabled] = React.useState(true);
   const [checked, setChecked] = React.useState(true);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [sheetOpen, setSheetOpen] = React.useState(false);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [sampleName, setSampleName] = React.useState("WeBase Admin");
+  const [sampleNotes, setSampleNotes] = React.useState(
+    "Reusable components stay calm, compact, and accessible.",
+  );
 
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
-                <Blocks className="h-4 w-4" aria-hidden="true" />
-                System / Components
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
-                Admin components for consistent control surfaces.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                Preview reusable form, feedback, and confirmation primitives in the same neutral WeBase visual system.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Primitives</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">7</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Style</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">1:1</p>
-              </div>
-            </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.24em] text-orange-600 dark:text-orange-400">
+              System / Components
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-card-foreground">
+              Component gallery
+            </h1>
           </div>
-        </section>
+          <Badge variant="outline" className="w-fit bg-muted/40 text-muted-foreground">
+            Full custom UI coverage
+          </Badge>
+        </div>
 
         <div className="grid gap-5 xl:grid-cols-2">
           <ShowcaseCard
@@ -110,6 +106,32 @@ export default function ComponentsPage() {
             description="Native fields wrapped with consistent labels, helper text, and orange focus states."
             icon={ShieldCheck}
           >
+            <FormField
+              label="Workspace name"
+              description="Input stays controlled so previews mirror production form behavior."
+              htmlFor="component-name"
+            >
+              <Input
+                id="component-name"
+                value={sampleName}
+                onChange={(event) => setSampleName(event.target.value)}
+                placeholder="Enter workspace name"
+              />
+            </FormField>
+
+            <FormField
+              label="Component notes"
+              description="Textarea supports longer controlled copy without changing the compact layout."
+              htmlFor="component-notes"
+            >
+              <Textarea
+                id="component-notes"
+                value={sampleNotes}
+                onChange={(event) => setSampleNotes(event.target.value)}
+                placeholder="Describe the component behavior"
+              />
+            </FormField>
+
             <FormField
               label="Default access role"
               description="Select keeps browser semantics while matching admin-surface layers."
@@ -173,9 +195,22 @@ export default function ComponentsPage() {
 
           <ShowcaseCard
             title="Feedback"
-            description="Toast variants keep short-lived operational feedback out of form layouts."
+            description="Buttons, badges, and toast variants keep operational feedback compact and consistent."
             icon={Bell}
           >
+            <div className="flex flex-wrap gap-3 rounded-2xl border border-border/50 bg-card/60 p-4 dark:border-white/[0.06] dark:bg-white/[0.03]">
+              <Button>Default button</Button>
+              <Button variant="outline">Outline button</Button>
+              <Button variant="destructive">Destructive button</Button>
+              <Button disabled>Disabled button</Button>
+            </div>
+            <div className="flex flex-wrap gap-2 rounded-2xl border border-border/50 bg-muted/40 p-4 dark:border-white/[0.06] dark:bg-white/[0.04]">
+              <Badge>default</Badge>
+              <Badge variant="outline" className="bg-background/60 text-muted-foreground">
+                outline
+              </Badge>
+              <Badge variant="destructive">destructive</Badge>
+            </div>
             <div className="flex flex-wrap gap-3">
               <Button
                 variant="outline"
@@ -212,26 +247,41 @@ export default function ComponentsPage() {
                 Destructive toast
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2 rounded-2xl border border-border/50 bg-muted/40 p-4 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <Badge variant="outline" className="bg-background/60 text-muted-foreground">
-                default
-              </Badge>
-              <Badge className="bg-orange-500 text-white">success</Badge>
-              <Badge variant="destructive">destructive</Badge>
-            </div>
           </ShowcaseCard>
 
           <ShowcaseCard
-            title="Confirm dialog"
-            description="Controlled confirmation keeps high-intent actions explicit and reversible in demos."
+            title="Dialogs and panels"
+            description="Dialog, confirmation, and sheet primitives keep focused interactions accessible."
             icon={CheckCircle2}
           >
             <div className="rounded-2xl border border-border/50 bg-card/60 p-4 text-sm leading-6 text-muted-foreground dark:border-white/[0.06] dark:bg-white/[0.03]">
-              Open a product-safe confirmation preview. It acknowledges a UI review only and does not mutate mock data.
+              Open product-safe overlays. These previews acknowledge UI review only and do not mutate mock data.
             </div>
-            <Button onClick={() => setConfirmOpen(true)}>Open confirmation</Button>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => setDialogOpen(true)}>Open dialog</Button>
+              <Button variant="outline" onClick={() => setSheetOpen(true)}>
+                Open sheet
+              </Button>
+              <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
+                Open confirmation
+              </Button>
+            </div>
           </ShowcaseCard>
         </div>
+
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen} title="Standard dialog preview">
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <p>This dialog demonstrates the base accessible modal primitive.</p>
+            <Button onClick={() => setDialogOpen(false)}>Close dialog</Button>
+          </div>
+        </Dialog>
+
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen} title="Admin sheet preview">
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <p>Sheets keep supporting details available without leaving the current page.</p>
+            <Button onClick={() => setSheetOpen(false)}>Close sheet</Button>
+          </div>
+        </Sheet>
 
         <ConfirmDialog
           open={confirmOpen}

@@ -1,6 +1,6 @@
 "use client";
 
-import { KeyRound, Plus, RefreshCw, ShieldCheck, Users } from "lucide-react";
+import { KeyRound, Plus, RefreshCw, Users } from "lucide-react";
 import * as React from "react";
 
 import { DataTable, type DataTableColumn } from "@/components/data-table/data-table";
@@ -349,41 +349,19 @@ export default function RolesPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        <section className="admin-surface p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                System / Roles
-              </p>
-              <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-card-foreground sm:text-5xl">
-                Role permissions with menu-level clarity.
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                Create, edit, disable, and remove mock roles while assigning only the menus each role can reach.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner sm:min-w-72 dark:border-white/[0.06] dark:bg-white/[0.04]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Roles</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">{total}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Menus</p>
-                <p className="mt-2 text-2xl font-semibold text-card-foreground">{enabledMenus.length}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <TableToolbar
           keyword={keyword}
           onKeywordChange={handleKeywordChange}
           status={status}
           onStatusChange={handleStatusChange}
           action={
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="bg-muted/40 text-muted-foreground">
+                {total} roles
+              </Badge>
+              <Badge variant="outline" className="bg-muted/40 text-muted-foreground">
+                {enabledMenus.length} menus
+              </Badge>
               <Button variant="outline" onClick={() => void reloadRoles()} disabled={loading}>
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
                 Refresh
