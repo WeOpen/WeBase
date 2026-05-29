@@ -65,14 +65,16 @@ export function TableToolbar({
         <Select
           id={statusId}
           value={status}
-          onChange={(event) => onStatusChange(event.target.value)}
-          className="rounded-md"
+          onValueChange={onStatusChange}
+          triggerClassName="rounded-md"
         >
+          <Select.Content>
           {statusOptions.map((option) => (
-            <option key={option.value} value={option.value}>
+            <Select.Option key={option.value} value={option.value}>
               {option.label}
-            </option>
+            </Select.Option>
           ))}
+          </Select.Content>
         </Select>
       </div>
 

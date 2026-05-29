@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,7 @@ function getFocusableElements(container: HTMLElement) {
   );
 }
 
-export function Dialog({
+function DialogInner({
   open,
   onOpenChange,
   title,
@@ -50,9 +51,7 @@ export function Dialog({
   const previousActiveElementRef = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
 
     previousActiveElementRef.current = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
@@ -60,13 +59,9 @@ export function Dialog({
 
     const focusContent = window.setTimeout(() => {
       const content = contentRef.current;
-
-      if (!content) {
-        return;
-      }
+      if (!content) return;
 
       const initialFocusElement = initialFocusRef?.current;
-
       if (initialFocusElement && content.contains(initialFocusElement)) {
         initialFocusElement.focus();
         return;
@@ -77,9 +72,7 @@ export function Dialog({
     }, 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false);
-      }
+      if (event.key === "Escape") onOpenChange(false);
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -93,18 +86,12 @@ export function Dialog({
   }, [initialFocusRef, onOpenChange, open]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key !== "Tab") {
-      return;
-    }
+    if (event.key !== "Tab") return;
 
     const content = contentRef.current;
-
-    if (!content) {
-      return;
-    }
+    if (!content) return;
 
     const focusableElements = getFocusableElements(content);
-
     if (focusableElements.length === 0) {
       event.preventDefault();
       content.focus();
@@ -126,17 +113,19 @@ export function Dialog({
     }
   };
 
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      className={cn(
+        "fixed inset-0 z-[9999] flex items-center justify-center p-4 transition-opacity duration-200",
+        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+      )}
+    >
       <button
         type="button"
         aria-label="关闭弹窗"
         className="absolute inset-0 bg-background/70 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
+        tabIndex={open ? 0 : -1}
       />
       <section
         ref={contentRef}
@@ -146,25 +135,25 @@ export function Dialog({
         aria-labelledby={title ? titleId : undefined}
         aria-describedby={ariaDescribedBy}
         tabIndex={-1}
-        onKeyDown={handleKeyDown}
+        onKeyDown={open ? handleKeyDown : undefined}
         className={cn(
-          "relative z-10 w-full max-w-lg rounded-xl border border-border bg-card p-6 text-card-foreground shadow-2xl",
+          "relative z-10 w-full max-w-lg rounded-xl border border-border bg-card p-6 text-card-foreground shadow-2xl transition-all duration-200",
+          open ? "scale-100 opacity-100" : "scale-95 opacity-0",
           className,
         )}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           {title ? (
-            <h2 id={titleId} className="text-lg font-semibold leading-none">
-              {title}
-            </h2>
+            <h2 id={titleId} className="text-lg font-semibold leading-none">{title}</h2>
           ) : (
             <span />
           )}
           <button
             type="button"
             aria-label="关闭弹窗"
-            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => onOpenChange(false)}
+            tabIndex={open ? 0 : -1}
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -173,6 +162,11 @@ export function Dialog({
       </section>
     </div>
   );
+}
+
+export function Dialog(props: DialogProps) {
+  if (typeof document === "undefined") return null;
+  return createPortal(<DialogInner {...props} />, document.body);
 }
 
 export type { DialogProps };

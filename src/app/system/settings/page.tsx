@@ -7,6 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -152,20 +153,20 @@ export default function SettingsPage() {
             description="Set the product identity and the default visual preference for the scaffold."
             icon={SlidersHorizontal}
           >
-            <label className="space-y-2 text-sm font-medium text-card-foreground">
-              <span>System name</span>
+            <FormField label="System name" htmlFor="system-name">
               <Input
+                id="system-name"
                 required
                 value={settings.systemName}
                 onChange={(event) => updateValue("systemName", event.target.value)}
                 placeholder="WeBase Admin"
                 className="bg-muted/40 dark:bg-white/[0.04]"
               />
-            </label>
+            </FormField>
 
-            <label className="space-y-2 text-sm font-medium text-card-foreground">
-              <span>Logo text</span>
+            <FormField label="Logo text" htmlFor="logo-text">
               <Input
+                id="logo-text"
                 required
                 maxLength={6}
                 value={settings.logoText}
@@ -173,21 +174,23 @@ export default function SettingsPage() {
                 placeholder="WB"
                 className="bg-muted/40 dark:bg-white/[0.04]"
               />
-            </label>
+            </FormField>
 
-            <label className="space-y-2 text-sm font-medium text-card-foreground">
-              <span>Default theme</span>
+            <FormField label="Default theme" htmlFor="default-theme">
               <Select
+                id="default-theme"
                 value={settings.defaultTheme}
-                onChange={(event) => updateValue("defaultTheme", event.target.value as SystemSettings["defaultTheme"])}
+                onValueChange={(value) => updateValue("defaultTheme", value as SystemSettings["defaultTheme"])}
               >
+                <Select.Content>
                 {themeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <Select.Option key={option.value} value={option.value}>
                     {option.label}
-                  </option>
+                  </Select.Option>
                 ))}
+                </Select.Content>
               </Select>
-            </label>
+            </FormField>
           </SettingCard>
 
           <SettingCard
@@ -195,10 +198,10 @@ export default function SettingsPage() {
             description="Keep session lifetime and password guidance visible without adding auth guards."
             icon={LockKeyhole}
           >
-            <label className="space-y-2 text-sm font-medium text-card-foreground">
-              <span>Session timeout</span>
+            <FormField label="Session timeout" htmlFor="session-timeout">
               <div className="flex items-center gap-3">
                 <Input
+                  id="session-timeout"
                   required
                   min={1}
                   type="number"
@@ -210,18 +213,18 @@ export default function SettingsPage() {
                   minutes
                 </Badge>
               </div>
-            </label>
+            </FormField>
 
-            <label className="space-y-2 text-sm font-medium text-card-foreground">
-              <span>Password policy</span>
+            <FormField label="Password policy" htmlFor="password-policy">
               <Textarea
+                id="password-policy"
                 required
                 value={settings.passwordPolicy}
                 onChange={(event) => updateValue("passwordPolicy", event.target.value)}
                 placeholder="Minimum 8 characters with letters and numbers."
                 className="min-h-36 bg-background/55"
               />
-            </label>
+            </FormField>
           </SettingCard>
 
           <SettingCard

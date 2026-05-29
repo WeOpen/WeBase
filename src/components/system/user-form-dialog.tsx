@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { Status, UserRecord } from "@/lib/api/types";
@@ -86,31 +87,31 @@ function UserForm({
       <p className="text-sm leading-6 text-muted-foreground">{description}</p>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Username</span>
+        <FormField label="Username" htmlFor="user-username">
           <Input
+            id="user-username"
             required
             value={values.username}
             onChange={(event) => updateValue("username", event.target.value)}
             placeholder="webase_admin"
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Name</span>
+        <FormField label="Name" htmlFor="user-name">
           <Input
+            id="user-name"
             required
             value={values.name}
             onChange={(event) => updateValue("name", event.target.value)}
             placeholder="WeBase Admin"
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
-          <span>Email</span>
+        <FormField label="Email" htmlFor="user-email" className="sm:col-span-2">
           <Input
+            id="user-email"
             required
             type="email"
             value={values.email}
@@ -118,34 +119,38 @@ function UserForm({
             placeholder="admin@webase.local"
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Role</span>
+        <FormField label="Role" htmlFor="user-role">
           <Select
+            id="user-role"
             value={values.role}
-            onChange={(event) => updateValue("role", event.target.value)}
-            className="bg-background/70"
+            onValueChange={(value) => updateValue("role", value)}
+            triggerClassName="bg-background/70"
           >
+            <Select.Content>
             {roleOptions.map((role) => (
-              <option key={role} value={role}>
+              <Select.Option key={role} value={role}>
                 {role}
-              </option>
+              </Select.Option>
             ))}
+            </Select.Content>
           </Select>
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Status</span>
+        <FormField label="Status" htmlFor="user-status">
           <Select
+            id="user-status"
             value={values.status}
-            onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="bg-background/70"
+            onValueChange={(value) => updateValue("status", value as Status)}
+            triggerClassName="bg-background/70"
           >
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
+            <Select.Content>
+              <Select.Option value="enabled">Enabled</Select.Option>
+              <Select.Option value="disabled">Disabled</Select.Option>
+            </Select.Content>
           </Select>
-        </label>
+        </FormField>
       </div>
 
       <div className="flex justify-end gap-3 border-t border-border/70 pt-5">

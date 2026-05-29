@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { MenuRecord, Status } from "@/lib/api/types";
@@ -100,58 +101,60 @@ function MenuForm({
       <p className="text-sm leading-6 text-muted-foreground">{description}</p>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Menu name</span>
+        <FormField label="Menu name" htmlFor="menu-name">
           <Input
+            id="menu-name"
             required
             value={values.name}
             onChange={(event) => updateValue("name", event.target.value)}
             placeholder="Menu Management"
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Parent menu</span>
+        <FormField label="Parent menu" htmlFor="menu-parent">
           <Select
+            id="menu-parent"
             value={values.parentId ?? ""}
-            onChange={(event) => updateValue("parentId", event.target.value || undefined)}
-            className="bg-background/70"
+            onValueChange={(value) => updateValue("parentId", value || undefined)}
+            triggerClassName="bg-background/70"
           >
-            <option value="">Root menu</option>
-            {parentOptions.map((menu) => (
-              <option key={menu.id} value={menu.id}>
-                {menu.name}
-              </option>
-            ))}
+            <Select.Content>
+              <Select.Option value="">Root menu</Select.Option>
+              {parentOptions.map((menu) => (
+                <Select.Option key={menu.id} value={menu.id}>
+                  {menu.name}
+                </Select.Option>
+              ))}
+            </Select.Content>
           </Select>
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
-          <span>Path</span>
+        <FormField label="Path" htmlFor="menu-path" className="sm:col-span-2">
           <Input
+            id="menu-path"
             required
             value={values.path}
             onChange={(event) => updateValue("path", event.target.value)}
             placeholder="/system/menus"
             className="bg-background/55 font-mono"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Icon</span>
+        <FormField label="Icon" htmlFor="menu-icon">
           <Input
+            id="menu-icon"
             required
             value={values.icon}
             onChange={(event) => updateValue("icon", event.target.value)}
             placeholder="Menu"
             className="bg-background/55 font-mono"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Sort</span>
+        <FormField label="Sort" htmlFor="menu-sort">
           <Input
+            id="menu-sort"
             required
             type="number"
             min={0}
@@ -159,19 +162,21 @@ function MenuForm({
             onChange={(event) => updateValue("sort", Number(event.target.value))}
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Status</span>
+        <FormField label="Status" htmlFor="menu-status">
           <Select
+            id="menu-status"
             value={values.status}
-            onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="bg-background/70"
+            onValueChange={(value) => updateValue("status", value as Status)}
+            triggerClassName="bg-background/70"
           >
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
+            <Select.Content>
+              <Select.Option value="enabled">Enabled</Select.Option>
+              <Select.Option value="disabled">Disabled</Select.Option>
+            </Select.Content>
           </Select>
-        </label>
+        </FormField>
       </div>
 
       <div className="flex justify-end gap-3 border-t border-border/70 pt-5">

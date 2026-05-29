@@ -10,6 +10,11 @@ build/
 *.log
 *.tsbuildinfo
 thesvg/
+# Local AI/browser automation artifacts. Do not commit generated profiles,
+# screenshots, caches, credentials, or run evidence from this directory.
 .claude/
+.claude/**
 .worktrees/
 worktrees/
+.omx/
+.omx/**

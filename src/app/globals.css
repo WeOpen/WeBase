@@ -65,6 +65,9 @@
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
   --radius: 0.75rem;
+  --scrollbar-thumb: color-mix(in oklch, var(--muted-foreground) 26%, transparent);
+  --scrollbar-thumb-hover: color-mix(in oklch, oklch(0.72 0.19 45) 78%, var(--muted-foreground));
+  --scrollbar-track: transparent;
 }
 
 .dark {
@@ -92,12 +95,44 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
+  --scrollbar-thumb: color-mix(in oklch, var(--foreground) 18%, transparent);
+  --scrollbar-thumb-hover: color-mix(in oklch, oklch(0.72 0.19 45) 72%, var(--foreground));
+  --scrollbar-track: transparent;
 }
 
 * {
   box-sizing: border-box;
   border-color: var(--border);
   outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 2.5rem;
+  border: 0.1875rem solid transparent;
+  border-radius: 999px;
+  background: var(--scrollbar-thumb);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  border-width: 0.125rem;
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 html {
@@ -124,6 +159,27 @@ body {
 
 .dark ::selection {
   background: oklch(0.93 0 0 / 18%);
+}
+
+:where(
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]),
+  [role="switch"]:not(:disabled),
+  label:has(input:not(:disabled)),
+  summary
+) {
+  cursor: pointer;
+}
+
+:where(
+  button:disabled,
+  input:disabled,
+  textarea:disabled,
+  [aria-disabled="true"]
+) {
+  cursor: not-allowed;
 }
 
 .admin-surface {
@@ -163,6 +219,15 @@ body {
 .animate-fade-in-up,
 .fade-in {
   animation: fade-in-up 0.3s ease-out both;
+}
+
+@keyframes progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.animate-progress-indeterminate {
+  animation: progress-indeterminate 1.5s ease-in-out infinite;
 }
 
 @keyframes float {

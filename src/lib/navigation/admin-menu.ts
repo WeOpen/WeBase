@@ -37,7 +37,7 @@ export const adminMenu: AdminMenuItem[] = [
     icon: MenuSquare,
   },
   {
-    title: "组件示例",
+    title: "设计系统",
     href: "/system/components",
     icon: Blocks,
   },

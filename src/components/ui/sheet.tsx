@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
 
@@ -30,9 +31,9 @@ type SheetAccessibleName =
 
 type SheetProps = SheetCommonProps & SheetAccessibleName;
 
-const sideClasses: Record<SheetSide, string> = {
-  left: "left-0 border-r",
-  right: "right-0 border-l",
+const sideTranslate: Record<SheetSide, string> = {
+  left: "-translate-x-full",
+  right: "translate-x-full",
 };
 
 function getFocusableElements(container: HTMLElement) {
@@ -41,7 +42,7 @@ function getFocusableElements(container: HTMLElement) {
   );
 }
 
-export function Sheet({
+function SheetInner({
   open,
   onOpenChange,
   title,
@@ -55,9 +56,7 @@ export function Sheet({
   const previousActiveElementRef = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
 
     previousActiveElementRef.current = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
@@ -65,19 +64,14 @@ export function Sheet({
 
     const focusContent = window.setTimeout(() => {
       const content = contentRef.current;
-
-      if (!content) {
-        return;
-      }
+      if (!content) return;
 
       const [firstFocusable] = getFocusableElements(content);
       (firstFocusable ?? content).focus();
     }, 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false);
-      }
+      if (event.key === "Escape") onOpenChange(false);
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -91,18 +85,12 @@ export function Sheet({
   }, [onOpenChange, open]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key !== "Tab") {
-      return;
-    }
+    if (event.key !== "Tab") return;
 
     const content = contentRef.current;
-
-    if (!content) {
-      return;
-    }
+    if (!content) return;
 
     const focusableElements = getFocusableElements(content);
-
     if (focusableElements.length === 0) {
       event.preventDefault();
       content.focus();
@@ -124,17 +112,19 @@ export function Sheet({
     }
   };
 
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50">
+    <div
+      className={cn(
+        "fixed inset-0 z-[9999] transition-opacity duration-200",
+        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+      )}
+    >
       <button
         type="button"
         aria-label="关闭抽屉"
         className="absolute inset-0 bg-background/70 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
+        tabIndex={open ? 0 : -1}
       />
       <aside
         ref={contentRef}
@@ -143,26 +133,26 @@ export function Sheet({
         aria-label={title ? undefined : ariaLabel}
         aria-labelledby={title ? titleId : undefined}
         tabIndex={-1}
-        onKeyDown={handleKeyDown}
+        onKeyDown={open ? handleKeyDown : undefined}
         className={cn(
-          "fixed top-0 z-10 h-full w-80 max-w-[85vw] border-border bg-card p-6 text-card-foreground shadow-2xl",
-          sideClasses[side],
+          "fixed top-0 z-10 h-full w-80 max-w-[85vw] border-border bg-card p-6 text-card-foreground shadow-2xl transition-transform duration-300 ease-out",
+          side === "left" ? "left-0 border-r" : "right-0 border-l",
+          open ? "translate-x-0" : sideTranslate[side],
           className,
         )}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           {title ? (
-            <h2 id={titleId} className="text-lg font-semibold leading-none">
-              {title}
-            </h2>
+            <h2 id={titleId} className="text-lg font-semibold leading-none">{title}</h2>
           ) : (
             <span />
           )}
           <button
             type="button"
             aria-label="关闭抽屉"
-            className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => onOpenChange(false)}
+            tabIndex={open ? 0 : -1}
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -171,6 +161,11 @@ export function Sheet({
       </aside>
     </div>
   );
+}
+
+export function Sheet(props: SheetProps) {
+  if (typeof document === "undefined") return null;
+  return createPortal(<SheetInner {...props} />, document.body);
 }
 
 export type { SheetProps, SheetSide };

@@ -5,6 +5,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
+import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -163,20 +164,20 @@ function RoleForm({
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Role name</span>
+        <FormField label="Role name" htmlFor="role-name">
           <Input
+            id="role-name"
             required
             value={values.name}
             onChange={(event) => updateValue("name", event.target.value)}
             placeholder="Operations Manager"
             className="bg-background/55"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Role code</span>
+        <FormField label="Role code" htmlFor="role-code">
           <Input
+            id="role-code"
             required
             value={values.code}
             onChange={(event) => updateValue("code", event.target.value)}
@@ -184,30 +185,32 @@ function RoleForm({
             placeholder="OPERATIONS_MANAGER"
             className="bg-background/55 font-mono uppercase tracking-[0.08em]"
           />
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground">
-          <span>Status</span>
+        <FormField label="Status" htmlFor="role-status">
           <Select
+            id="role-status"
             value={values.status}
-            onChange={(event) => updateValue("status", event.target.value as Status)}
-            className="bg-background/70"
+            onValueChange={(value) => updateValue("status", value as Status)}
+            triggerClassName="bg-background/70"
           >
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
+            <Select.Content>
+              <Select.Option value="enabled">Enabled</Select.Option>
+              <Select.Option value="disabled">Disabled</Select.Option>
+            </Select.Content>
           </Select>
-        </label>
+        </FormField>
 
-        <label className="space-y-2 text-sm font-medium text-card-foreground sm:col-span-2">
-          <span>Description</span>
+        <FormField label="Description" htmlFor="role-description" className="sm:col-span-2">
           <Textarea
+            id="role-description"
             required
             value={values.description}
             onChange={(event) => updateValue("description", event.target.value)}
             placeholder="Describe what this role can access."
             className="bg-background/55"
           />
-        </label>
+        </FormField>
       </div>
 
       <section className="rounded-2xl border border-border/50 bg-muted/40 p-4 shadow-inner dark:border-white/[0.06] dark:bg-white/[0.04]">

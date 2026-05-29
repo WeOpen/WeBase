@@ -20,6 +20,8 @@ import type {
 } from "./types";
 
 const DELAY_MS = 150;
+const DEMO_USERNAME = "admin";
+const DEMO_PASSWORD = "admin123";
 
 interface UserListParams {
   keyword?: string;
@@ -122,9 +124,15 @@ export async function mockPost<T>(url: string, body?: unknown): Promise<ApiRespo
   switch (path) {
     case "/auth/login": {
       const payload = body as LoginPayload;
+      const username = payload.username.trim();
+
+      if (username !== DEMO_USERNAME || payload.password !== DEMO_PASSWORD) {
+        throw new Error("Invalid username or password.");
+      }
+
       const result: LoginResult = {
         token: `mock-token-${payload.remember ? "remember" : "session"}`,
-        user: { ...currentUser, username: payload.username || currentUser.username },
+        user: { ...currentUser, username },
       };
 
       return ok(result, "login success") as ApiResponse<T>;

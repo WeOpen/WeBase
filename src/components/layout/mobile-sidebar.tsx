@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { SidebarAccountCard } from "@/components/layout/sidebar-account-card";
 import { Sheet } from "@/components/ui/sheet";
 import { adminMenu } from "@/lib/navigation/admin-menu";
 import { useLayoutStore } from "@/lib/stores/layout-store";
@@ -28,27 +29,30 @@ export function MobileSidebar() {
       onOpenChange={setMobileSidebarOpen}
       side="left"
       title="WeBase 导航"
-      className="w-64 bg-background p-0 pt-6"
+      className="flex w-64 flex-col bg-background p-0 pt-6"
     >
-      <nav aria-label="移动端后台主导航" className="flex flex-col gap-0.5 p-3">
-        {adminMenu.map((item) => {
-          const Icon = item.icon;
-          const active = isActiveRoute(pathname, item.href);
+      <div className="flex min-h-0 flex-1 flex-col">
+        <nav aria-label="移动端后台主导航" className="flex flex-1 flex-col gap-0.5 p-3">
+          {adminMenu.map((item) => {
+            const Icon = item.icon;
+            const active = isActiveRoute(pathname, item.href);
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileSidebarOpen(false)}
-              className={cn(navItemClass, active && activeClass)}
-              aria-current={active ? "page" : undefined}
-            >
-              <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
-              <span>{item.title}</span>
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileSidebarOpen(false)}
+                className={cn(navItemClass, active && activeClass)}
+                aria-current={active ? "page" : undefined}
+              >
+                <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
+                <span>{item.title}</span>
+              </Link>
+            );
+          })}
+        </nav>
+        <SidebarAccountCard className="m-3 mt-auto" onLogout={() => setMobileSidebarOpen(false)} />
+      </div>
     </Sheet>
   );
 }

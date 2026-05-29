@@ -5,22 +5,11 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { adminMenu, type AdminMenuItem } from "@/lib/navigation/admin-menu";
-import { roles, users } from "@/lib/api/mock-data";
+import { buildGlobalSearchResults, type SearchResult, type SearchResultType } from "@/lib/navigation/global-search";
 import { cn } from "@/lib/utils";
-
-type SearchResultType = "menu" | "user" | "role";
-
-type SearchResult = {
-  id: string;
-  type: SearchResultType;
-  title: string;
-  description: string;
-  href: string;
-  keywords: string;
-};
 
 const resultLabels: Record<SearchResultType, string> = {
   menu: "菜单",
@@ -33,41 +22,6 @@ const resultIcons = {
   user: UserRound,
   role: ShieldCheck,
 };
-
-function flattenMenu(items: AdminMenuItem[]): AdminMenuItem[] {
-  return items.flatMap((item) => [item, ...(item.children ? flattenMenu(item.children) : [])]);
-}
-
-export function buildGlobalSearchResults(): SearchResult[] {
-  const menuResults = flattenMenu(adminMenu).map((item) => ({
-    id: `menu:${item.href}`,
-    type: "menu" as const,
-    title: item.title,
-    description: item.href,
-    href: item.href,
-    keywords: [item.title, item.href].join(" "),
-  }));
-
-  const userResults = users.map((user) => ({
-    id: `user:${user.id}`,
-    type: "user" as const,
-    title: user.name,
-    description: `${user.username} · ${user.email} · ${user.role}`,
-    href: "/system/users",
-    keywords: [user.name, user.username, user.email, user.role, user.status].join(" "),
-  }));
-
-  const roleResults = roles.map((role) => ({
-    id: `role:${role.id}`,
-    type: "role" as const,
-    title: role.name,
-    description: `${role.code} · ${role.description}`,
-    href: "/system/roles",
-    keywords: [role.name, role.code, role.description, role.status].join(" "),
-  }));
-
-  return [...menuResults, ...userResults, ...roleResults];
-}
 
 function getFilteredResults(results: SearchResult[], query: string) {
   const normalizedQuery = query.trim().toLowerCase();
@@ -141,12 +95,13 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
               const Icon = resultIcons[result.type];
 
               return (
-                <button
+                <Button
                   key={result.id}
                   type="button"
                   onClick={() => handleSelect(result)}
+                  variant="ghost"
                   className={cn(
-                    "group flex w-full items-center gap-3 rounded-2xl border border-transparent p-3 text-left transition-all duration-200",
+                    "group h-auto w-full justify-start gap-3 whitespace-normal rounded-2xl border border-transparent p-3 text-left font-normal transition-all duration-200",
                     "hover:border-border hover:bg-accent/50 hover:shadow-lg hover:shadow-black/5 dark:hover:bg-white/[0.05] dark:hover:shadow-black/20",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   )}
@@ -171,7 +126,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
                     </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
-                </button>
+                </Button>
               );
             })}
           </div>
